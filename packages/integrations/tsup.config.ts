@@ -1,0 +1,15 @@
+import { defineConfig } from 'tsup'
+
+export default defineConfig({
+  entry: ['src/index.ts', 'src/web/index.ts', 'src/vue/index.ts'],
+  format: ['cjs', 'esm'],
+  dts: {
+    compilerOptions: {
+      composite: false,
+    },
+  },
+  clean: true,
+  sourcemap: true,
+  target: 'es2020',
+  external: ['@simple-monitor/shared', '@simple-monitor/core'],
+})

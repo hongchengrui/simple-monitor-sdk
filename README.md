@@ -23,7 +23,7 @@ simple-monitor-sdk/
 │   ├── core/          # 核心监控模块
 │   ├── integrations/  # 集成插件（Vue、React 等）
 │   ├── shared/        # 共享类型和工具函数
-│   └── dist/          # 打包输出目录
+│   └── custom-sdk/          # 打包输出目录
 ├── docs/              # 文档
 └── examples/          # 示例代码
 ```
@@ -52,23 +52,23 @@ import { initMonitor } from '@simple-monitor/sdk'
 initMonitor({
   dsn: 'https://your-monitor-server.com/report',
   apiKey: 'your-app-key',
-  
+
   // 可选配置
   sampleRate: {
-    error: 1.0,        // 错误采样率 100%
-    performance: 0.1,  // 性能采样率 10%
-    behavior: 0.01     // 行为采样率 1%
+    error: 1.0, // 错误采样率 100%
+    performance: 0.1, // 性能采样率 10%
+    behavior: 0.01, // 行为采样率 1%
   },
-  
+
   enableTraceId: true, // 开启 TraceId
-  
+
   hooks: {
     beforeSend: (data) => {
       // 在发送前修改数据
       data.userId = 'user-123'
       return data
-    }
-  }
+    },
+  },
 })
 ```
 
@@ -76,27 +76,27 @@ initMonitor({
 
 ### 基础配置
 
-| 参数 | 类型 | 必填 | 默认值 | 说明 |
-|------|------|------|--------|------|
-| dsn | string | 是 | - | 上报地址 |
-| apiKey | string | 是 | - | 应用唯一标识 |
-| disabled | boolean | 否 | false | 是否禁用监控 |
+| 参数     | 类型    | 必填 | 默认值 | 说明         |
+| -------- | ------- | ---- | ------ | ------------ |
+| dsn      | string  | 是   | -      | 上报地址     |
+| apiKey   | string  | 是   | -      | 应用唯一标识 |
+| disabled | boolean | 否   | false  | 是否禁用监控 |
 
 ### 上报配置
 
-| 参数 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| batchSize | number | 10 | 批量上报大小 |
-| batchTimeout | number | 5000 | 批量上报超时时间（ms） |
-| maxRetries | number | 3 | 失败重试次数 |
-| retryDelay | number | 1000 | 重试延迟（ms） |
+| 参数         | 类型   | 默认值 | 说明                   |
+| ------------ | ------ | ------ | ---------------------- |
+| batchSize    | number | 10     | 批量上报大小           |
+| batchTimeout | number | 5000   | 批量上报超时时间（ms） |
+| maxRetries   | number | 3      | 失败重试次数           |
+| retryDelay   | number | 1000   | 重试延迟（ms）         |
 
 ### 过滤配置
 
-| 参数 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| filterXhrUrlRegExp | RegExp | - | 过滤 XHR URL 的正则 |
-| ignoreErrors | RegExp[] | - | 忽略错误的正则列表 |
+| 参数               | 类型     | 默认值 | 说明                |
+| ------------------ | -------- | ------ | ------------------- |
+| filterXhrUrlRegExp | RegExp   | -      | 过滤 XHR URL 的正则 |
+| ignoreErrors       | RegExp[] | -      | 忽略错误的正则列表  |
 
 ### 采样配置
 
@@ -110,17 +110,17 @@ sampleRate: {
 
 ### TraceId 配置
 
-| 参数 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| enableTraceId | boolean | false | 开启 TraceId |
-| traceIdFieldName | string | 'Trace-Id' | TraceId 字段名 |
-| includeHttpUrlTraceIdRegExp | RegExp | - | 需要添加 TraceId 的 URL 正则 |
+| 参数                        | 类型    | 默认值     | 说明                         |
+| --------------------------- | ------- | ---------- | ---------------------------- |
+| enableTraceId               | boolean | false      | 开启 TraceId                 |
+| traceIdFieldName            | string  | 'Trace-Id' | TraceId 字段名               |
+| includeHttpUrlTraceIdRegExp | RegExp  | -          | 需要添加 TraceId 的 URL 正则 |
 
 ### 面包屑配置
 
-| 参数 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| maxBreadcrumbs | number | 20 | 最大栈数量 |
+| 参数           | 类型   | 默认值 | 说明       |
+| -------------- | ------ | ------ | ---------- |
+| maxBreadcrumbs | number | 20     | 最大栈数量 |
 
 ### 钩子函数
 
