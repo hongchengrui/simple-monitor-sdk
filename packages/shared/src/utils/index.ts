@@ -1,27 +1,23 @@
 /**
  * 工具函数统一导出
+ * 按职责分层：基础工具 → 数据转换 → 浏览器操作 → 拦截器 → 错误处理 → 通用工具
+ * 采用直接调用模式，移除事件系统以提升性能
  */
 
-// 浏览器相关工具
-export * from './browser'
+// 🔵 基础工具层（纯函数）
+export * from './base'
 
-// 错误处理工具
-export * from './error'
-
-// HTTP监控工具
-export * from './http'
-
-// DOM操作工具
-export * from './dom'
-
-// 事件系统工具
-export * from './event'
-
-// 数据转换工具
+// 🟢 数据转换层（纯函数）
 export * from './transform'
 
-// 格式化工具
-export * from './format'
+// 🔴 浏览器操作层（有副作用）
+export * from './browser'
 
-// 验证工具
-export * from './validate'
+// 🟡 拦截器层（有副作用）
+export * from './intercept'
+
+// 🟣 错误处理层
+export * from './error'
+
+// 🟠 通用工具层
+export * from './common'

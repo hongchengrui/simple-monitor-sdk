@@ -5,6 +5,9 @@ import { Breadcrumb } from './Breadcrumb'
 import { ErrorCollector } from './collectors/ErrorCollector'
 import { PerformanceCollector } from './collectors/PerformanceCollector'
 import { BehaviorCollector } from './collectors/BehaviorCollector'
+import { HTTPCollector } from './collectors/HTTPCollector'
+import { ConsoleCollector } from './collectors/ConsoleCollector'
+import { RouterCollector } from './collectors/RouterCollector'
 import { logger } from '@simple-monitor/shared'
 import { generateUUID } from '@simple-monitor/shared'
 
@@ -79,6 +82,33 @@ export class Monitor {
       this.sessionId
     )
     this.collectors.push(behaviorCollector)
+
+    // HTTP 收集器 - 需要 breadcrumb 来记录 HTTP 请求
+    const httpCollector = new HTTPCollector(
+      this.config,
+      this.queue,
+      this.sessionId,
+      this.breadcrumb
+    )
+    this.collectors.push(httpCollector)
+
+    // Console 收集器 - 需要 breadcrumb 来记录 Console 调用
+    const consoleCollector = new ConsoleCollector(
+      this.config,
+      this.queue,
+      this.sessionId,
+      this.breadcrumb
+    )
+    this.collectors.push(consoleCollector)
+
+    // Router 收集器 - 需要 breadcrumb 来记录路由变化
+    const routerCollector = new RouterCollector(
+      this.config,
+      this.queue,
+      this.sessionId,
+      this.breadcrumb
+    )
+    this.collectors.push(routerCollector)
 
     // 启动所有收集器
     this.collectors.forEach((collector) => collector.start())

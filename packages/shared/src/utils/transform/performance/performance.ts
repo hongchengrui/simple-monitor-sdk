@@ -6,6 +6,6 @@ export function transformPerformanceData(data: any): any {
     type: 'performance',
     loadTime: data.loadTime,
     fp: data.fp,
-    fcp: data.fcp
+    fcp: data.fcp,
   }
 }

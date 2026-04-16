@@ -17,18 +17,6 @@ export function isEmpty(value: any): boolean {
 }
 
 /**
- * 验证 URL
- */
-export function isValidUrl(url: string): boolean {
-  try {
-    new URL(url)
-    return true
-  } catch {
-    return false
-  }
-}
-
-/**
  * 检查是否应该采样
  */
 export function shouldSample(sampleRate: number): boolean {

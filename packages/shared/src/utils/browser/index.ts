@@ -4,3 +4,4 @@
 export * from './env'
 export * from './replace'
 export * from './intercept'
+export * from './logger'

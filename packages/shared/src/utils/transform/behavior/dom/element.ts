@@ -1,7 +1,7 @@
 /**
  * 元素信息提取工具
  */
-import type { DOMElementInfo } from '../../types'
+import type { DOMElementInfo } from '../../../../types'
 export function getElementInfo(element: Element): DOMElementInfo {
   const info: DOMElementInfo = { tagName: element.tagName }
   if (element.id) info.id = element.id

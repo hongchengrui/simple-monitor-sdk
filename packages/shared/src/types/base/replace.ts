@@ -2,6 +2,7 @@
  * API重写相关类型定义
  * 用于定义需要替换或重写的原生API的数据结构
  */
+import { EventTypes } from './constant'
 
 /**
  * 控制台触发数据
@@ -23,6 +24,8 @@ export interface RouterInfo {
   from: string
   /** 目标路由 */
   to: string
+  /** 事件类型，使用已有的枚举 */
+  type: EventTypes.HISTORY | EventTypes.HASHCHANGE
 }
 
 /**
