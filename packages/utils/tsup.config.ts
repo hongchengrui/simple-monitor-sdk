@@ -14,6 +14,10 @@ export default defineConfig({
   sourcemap: true,
   target: 'es2020',
   splitting: false,
-  // Don't externalize workspace deps - bundle them in
-  noExternal: ['@simple-monitor/types', '@simple-monitor/utils'],
+  esbuildOptions(options) {
+    options.banner = {
+      js: '// @simple-monitor/utils',
+    };
+  },
+  treeshake: true,
 });

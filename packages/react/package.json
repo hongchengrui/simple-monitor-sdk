@@ -1,7 +1,7 @@
 {
-  "name": "@simple-monitor/shared",
+  "name": "@simple-monitor/react",
   "version": "1.0.0",
-  "description": "Shared constants and utilities for Simple Monitor SDK",
+  "description": "React platform adapter for Simple Monitor SDK",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -22,11 +22,19 @@
   },
   "dependencies": {
     "@simple-monitor/types": "workspace:*",
-    "@simple-monitor/utils": "workspace:*"
+    "@simple-monitor/browser": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
   },
   "keywords": [
     "monitor",
-    "shared"
+    "react"
   ],
   "author": "",
   "license": "MIT"

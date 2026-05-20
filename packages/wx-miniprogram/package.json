@@ -1,7 +1,7 @@
 {
-  "name": "@simple-monitor/shared",
+  "name": "@simple-monitor/wx-miniprogram",
   "version": "1.0.0",
-  "description": "Shared constants and utilities for Simple Monitor SDK",
+  "description": "WeChat Mini Program platform adapter for Simple Monitor SDK",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -22,11 +22,14 @@
   },
   "dependencies": {
     "@simple-monitor/types": "workspace:*",
-    "@simple-monitor/utils": "workspace:*"
+    "@simple-monitor/shared": "workspace:*",
+    "@simple-monitor/utils": "workspace:*",
+    "@simple-monitor/core": "workspace:*"
   },
   "keywords": [
     "monitor",
-    "shared"
+    "miniprogram",
+    "wechat"
   ],
   "author": "",
   "license": "MIT"

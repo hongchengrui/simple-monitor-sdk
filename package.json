@@ -1,28 +1,49 @@
 {
   "name": "simple-monitor-sdk",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "private": true,
-  "description": "Simple frontend monitoring SDK",
+  "description": "Lightweight cross-platform frontend monitoring SDK",
   "scripts": {
     "dev": "pnpm -r --parallel run dev",
     "build": "pnpm -r run build",
+    "build:types": "pnpm --filter @simple-monitor/types run build",
+    "build:utils": "pnpm --filter @simple-monitor/utils run build",
+    "build:shared": "pnpm --filter @simple-monitor/shared run build",
+    "build:core": "pnpm --filter @simple-monitor/core run build",
+    "build:platforms": "pnpm -r --filter './packages/{browser,react,vue,wx-miniprogram,web-performance,web}' run build",
+    "clean": "pnpm -r run clean && rm -rf node_modules",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "format": "prettier --write \"**/*.{ts,json,md}\"",
-    "clean": "pnpm -r run clean && rm -rf node_modules"
+    "typecheck": "pnpm -r run typecheck",
+    "prepublishOnly": "pnpm build",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "pnpm build && changeset publish"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@typescript-eslint/parser": "^6.21.0",
-    "eslint": "^8.56.0",
+    "@changesets/cli": "^2.27.1",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.1.3",
     "prettier": "^3.2.5",
     "tsup": "^8.0.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vite": "^5.1.0"
   },
   "engines": {
     "node": ">=16.0.0",
     "pnpm": ">=8.0.0"
-  }
+  },
+  "keywords": [
+    "monitor",
+    "sdk",
+    "frontend",
+    "error-tracking",
+    "performance-monitoring"
+  ],
+  "author": "",
+  "license": "MIT"
 }

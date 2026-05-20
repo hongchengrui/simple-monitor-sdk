@@ -1,7 +1,7 @@
 {
-  "name": "@simple-monitor/shared",
+  "name": "@simple-monitor/web",
   "version": "1.0.0",
-  "description": "Shared constants and utilities for Simple Monitor SDK",
+  "description": "Web integration bundle for Simple Monitor SDK",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -22,11 +22,12 @@
   },
   "dependencies": {
     "@simple-monitor/types": "workspace:*",
-    "@simple-monitor/utils": "workspace:*"
+    "@simple-monitor/browser": "workspace:*",
+    "@simple-monitor/web-performance": "workspace:*"
   },
   "keywords": [
     "monitor",
-    "shared"
+    "web"
   ],
   "author": "",
   "license": "MIT"

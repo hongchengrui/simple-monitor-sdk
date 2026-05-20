@@ -1,7 +1,7 @@
 {
-  "name": "@simple-monitor/shared",
+  "name": "@simple-monitor/browser",
   "version": "1.0.0",
-  "description": "Shared constants and utilities for Simple Monitor SDK",
+  "description": "Browser platform adapter for Simple Monitor SDK",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -22,11 +22,13 @@
   },
   "dependencies": {
     "@simple-monitor/types": "workspace:*",
-    "@simple-monitor/utils": "workspace:*"
+    "@simple-monitor/shared": "workspace:*",
+    "@simple-monitor/utils": "workspace:*",
+    "@simple-monitor/core": "workspace:*"
   },
   "keywords": [
     "monitor",
-    "shared"
+    "browser"
   ],
   "author": "",
   "license": "MIT"

@@ -3,13 +3,15 @@
   "compilerOptions": {
     "composite": true,
     "outDir": "./dist",
-    "rootDir": "./src"
+    "rootDir": "./src",
+    "types": []
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.test.ts"],
   "references": [
     { "path": "../types" },
     { "path": "../shared" },
-    { "path": "../utils" }
+    { "path": "../utils" },
+    { "path": "../core" }
   ]
 }

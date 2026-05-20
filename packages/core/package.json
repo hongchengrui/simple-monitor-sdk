@@ -1,26 +1,34 @@
 {
   "name": "@simple-monitor/core",
-  "version": "0.0.1",
-  "description": "Core monitoring functionality for simple-monitor-sdk",
+  "version": "1.0.0",
+  "description": "Core monitoring logic for Simple Monitor SDK",
   "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "import": "./dist/index.js"
     }
   },
   "files": [
     "dist"
   ],
-  "dependencies": {
-    "@simple-monitor/shared": "workspace:*"
-  },
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "clean": "rm -rf dist"
-  }
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@simple-monitor/types": "workspace:*",
+    "@simple-monitor/shared": "workspace:*",
+    "@simple-monitor/utils": "workspace:*"
+  },
+  "keywords": [
+    "monitor",
+    "core"
+  ],
+  "author": "",
+  "license": "MIT"
 }

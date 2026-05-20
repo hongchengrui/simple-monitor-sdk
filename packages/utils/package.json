@@ -1,7 +1,7 @@
 {
-  "name": "@simple-monitor/shared",
+  "name": "@simple-monitor/utils",
   "version": "1.0.0",
-  "description": "Shared constants and utilities for Simple Monitor SDK",
+  "description": "Utility functions for Simple Monitor SDK",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -21,12 +21,11 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@simple-monitor/types": "workspace:*",
-    "@simple-monitor/utils": "workspace:*"
+    "@simple-monitor/types": "workspace:*"
   },
   "keywords": [
     "monitor",
-    "shared"
+    "utils"
   ],
   "author": "",
   "license": "MIT"

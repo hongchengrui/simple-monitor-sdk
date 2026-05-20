@@ -3,13 +3,15 @@
   "compilerOptions": {
     "composite": true,
     "outDir": "./dist",
-    "rootDir": "./src"
+    "rootDir": "./src",
+    "lib": ["ES2020", "DOM"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.test.ts"],
   "references": [
     { "path": "../types" },
     { "path": "../shared" },
-    { "path": "../utils" }
+    { "path": "../utils" },
+    { "path": "../core" }
   ]
 }

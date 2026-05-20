@@ -1,7 +1,7 @@
 {
-  "name": "@simple-monitor/shared",
+  "name": "@simple-monitor/web-performance",
   "version": "1.0.0",
-  "description": "Shared constants and utilities for Simple Monitor SDK",
+  "description": "Web performance monitoring for Simple Monitor SDK",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -26,7 +26,8 @@
   },
   "keywords": [
     "monitor",
-    "shared"
+    "performance",
+    "web-vitals"
   ],
   "author": "",
   "license": "MIT"

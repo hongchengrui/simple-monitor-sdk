@@ -1,12 +1,8 @@
-export * from './Monitor'
-export * from './Queue'
-export * from './Sender'
-export * from './Breadcrumb'
-export * from './transport'
-export * from './collectors/BaseCollector'
-export * from './collectors/ErrorCollector'
-export * from './collectors/PerformanceCollector'
-export * from './collectors/BehaviorCollector'
-export * from './collectors/HTTPCollector'
-export * from './collectors/ConsoleCollector'
-export * from './collectors/RouterCollector'
+/**
+ * Simple Monitor SDK - Core Module
+ *
+ * This package contains the core monitoring logic.
+ */
+
+// Placeholder - core logic will be implemented in the next step
+export {};

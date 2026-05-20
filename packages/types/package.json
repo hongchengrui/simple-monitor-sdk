@@ -1,7 +1,7 @@
 {
-  "name": "@simple-monitor/shared",
+  "name": "@simple-monitor/types",
   "version": "1.0.0",
-  "description": "Shared constants and utilities for Simple Monitor SDK",
+  "description": "Type definitions for Simple Monitor SDK",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -20,13 +20,10 @@
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit"
   },
-  "dependencies": {
-    "@simple-monitor/types": "workspace:*",
-    "@simple-monitor/utils": "workspace:*"
-  },
   "keywords": [
     "monitor",
-    "shared"
+    "types",
+    "typescript"
   ],
   "author": "",
   "license": "MIT"
