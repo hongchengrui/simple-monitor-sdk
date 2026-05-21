@@ -1,84 +1,28 @@
-/**
- * Breadcrumb Type Enums
- * Defines user behavior tracking types (breadcrumb stack)
- */
+import { Severity } from './Severity'
+import { BreadCrumbTypes } from './eventTypes'
+import { ReportDataType } from './transportData'
+import { IRouter, TriggerConsole } from './replace'
+import { TNumStrObj } from './common'
 
-/**
- * Individual breadcrumb types for categorizing user actions
- */
-export enum BreadCrumbTypes {
-  /** XHR requests */
-  XHR = 'xhr',
-
-  /** Fetch requests */
-  FETCH = 'fetch',
-
-  /** DOM click events */
-  CLICK = 'click',
-
-  /** Route navigation */
-  ROUTE = 'route',
-
-  /** Console logging */
-  CONSOLE = 'console',
-
-  /** Custom user-added breadcrumbs */
-  CUSTOMER = 'customer',
-
-  /** Code errors */
-  CODE_ERROR = 'code_error',
-
-  /** Resource errors */
-  RESOURCE_ERROR = 'resource_error',
-
-  /** Promise errors */
-  PROMISE_ERROR = 'promise_error',
-
-  /** Lifecycle events */
-  LIFECYCLE = 'lifecycle',
+export interface BreadcrumbPushData {
+  /**
+   * 事件类型
+   */
+  type: BreadCrumbTypes
+  data: ReportDataType | IRouter | TriggerConsole | TNumStrObj
+  category?: string
+  time?: number
+  level: Severity
 }
 
-/**
- * Breadcrumb categories for grouping related behaviors
- */
-export enum BreadCrumbCategory {
-  /** HTTP related activities (XHR, Fetch) */
-  HTTP = 'http',
-
-  /** User interactions (Click, Route) */
-  USER = 'user',
-
-  /** Debug activities (Console, Custom) */
-  DEBUG = 'debug',
-
-  /** Exception/Error events */
-  EXCEPTION = 'exception',
-
-  /** Application lifecycle events */
-  LIFECYCLE = 'lifecycle',
+export interface IBreadcrumb {
+  stack: BreadcrumbPushData[]
+  maxBreadcrumbs: number
+  beforePushBreadcrumb: unknown
+  push(data: BreadcrumbPushData): void
+  immediatePush(data: BreadcrumbPushData): void
+  shift(): boolean
+  clear(): void
+  getStack(): BreadcrumbPushData[]
+  bindOptions(options?: any): void
 }
-
-/**
- * Breadcrumb data structure
- */
-export interface BreadcrumbData {
-  /** Type of the breadcrumb */
-  type: BreadCrumbTypes;
-
-  /** Category grouping */
-  category: BreadCrumbCategory;
-
-  /** Associated data */
-  data: Record<string, any>;
-
-  /** Severity level */
-  level: Severity;
-
-  /** Timestamp (optional, will be set if not provided) */
-  time?: number;
-}
-
-/**
- * Import Severity from error types
- */
-import { Severity } from './error';

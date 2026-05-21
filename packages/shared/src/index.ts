@@ -1,25 +1,22 @@
 /**
- * Simple Monitor SDK - Shared Module
+ * Simple Monitor SDK - 共享模块
  *
- * This package contains shared constants and default configurations.
+ * 此包仅包含共享常量和默认配置。
  *
  * @module @simple-monitor/shared
  */
 
-// SDK Constants
-export * from './constants';
+// SDK 常量
+export * from './constants'
 
-// Default Configuration
-export * from './defaults';
+// 默认配置
+export * from './defaults'
 
-// HTTP Status Codes
-export * from './http-status';
+// 全局配置
+export * from './config'
 
-// Global Configuration
-export * from './config';
+// 设备和浏览器类型
+export * from './device'
 
-// Device and Browser Types
-export * from './device';
-
-// Error Messages
-export * from './messages';
+// 错误消息
+export * from './messages'

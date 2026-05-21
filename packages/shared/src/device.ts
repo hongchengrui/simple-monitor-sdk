@@ -1,232 +1,232 @@
 /**
- * Device and Browser Type Constants
+ * 设备和浏览器类型常量
  *
- * Constants for device types, browser types, and operating systems.
+ * 定义设备类型、浏览器类型和操作系统的常量。
  *
  * @module device
  */
 
-// ========== Device Types ==========
+// ========== 设备类型 ==========
 
 /**
- * Device type: Mobile
+ * 设备类型：移动设备
  */
-export const DEVICE_TYPE_MOBILE = 'mobile' as const;
+export const DEVICE_TYPE_MOBILE = 'mobile' as const
 
 /**
- * Device type: Tablet
+ * 设备类型：平板设备
  */
-export const DEVICE_TYPE_TABLET = 'tablet' as const;
+export const DEVICE_TYPE_TABLET = 'tablet' as const
 
 /**
- * Device type: Desktop
+ * 设备类型：桌面设备
  */
-export const DEVICE_TYPE_DESKTOP = 'desktop' as const;
+export const DEVICE_TYPE_DESKTOP = 'desktop' as const
 
 /**
- * Device type: Unknown
+ * 设备类型：未知
  */
-export const DEVICE_TYPE_UNKNOWN = 'unknown' as const;
+export const DEVICE_TYPE_UNKNOWN = 'unknown' as const
 
-// ========== Browser Types ==========
+// ========== 浏览器类型 ==========
 
 /**
- * Browser: Chrome
+ * 浏览器：Chrome
  */
-export const BROWSER_CHROME = 'chrome' as const;
+export const BROWSER_CHROME = 'chrome' as const
 
 /**
- * Browser: Firefox
+ * 浏览器：Firefox
  */
-export const BROWSER_FIREFOX = 'firefox' as const;
+export const BROWSER_FIREFOX = 'firefox' as const
 
 /**
- * Browser: Safari
+ * 浏览器：Safari
  */
-export const BROWSER_SAFARI = 'safari' as const;
+export const BROWSER_SAFARI = 'safari' as const
 
 /**
- * Browser: Edge
+ * 浏览器：Edge
  */
-export const BROWSER_EDGE = 'edge' as const;
+export const BROWSER_EDGE = 'edge' as const
 
 /**
- * Browser: Opera
+ * 浏览器：Opera
  */
-export const BROWSER_OPERA = 'opera' as const;
+export const BROWSER_OPERA = 'opera' as const
 
 /**
- * Browser: Internet Explorer
+ * 浏览器：Internet Explorer
  */
-export const BROWSER_IE = 'ie' as const;
+export const BROWSER_IE = 'ie' as const
 
 /**
- * Browser: Unknown
+ * 浏览器：未知
  */
-export const BROWSER_UNKNOWN = 'unknown' as const;
+export const BROWSER_UNKNOWN = 'unknown' as const
 
-// ========== Operating Systems ==========
+// ========== 操作系统 ==========
 
 /**
- * OS: Windows
+ * 操作系统：Windows
  */
-export const OS_WINDOWS = 'windows' as const;
+export const OS_WINDOWS = 'windows' as const
 
 /**
- * OS: macOS
+ * 操作系统：macOS
  */
-export const OS_MAC = 'mac' as const;
+export const OS_MAC = 'mac' as const
 
 /**
- * OS: Linux
+ * 操作系统：Linux
  */
-export const OS_LINUX = 'linux' as const;
+export const OS_LINUX = 'linux' as const
 
 /**
- * OS: Android
+ * 操作系统：Android
  */
-export const OS_ANDROID = 'android' as const;
+export const OS_ANDROID = 'android' as const
 
 /**
- * OS: iOS
+ * 操作系统：iOS
  */
-export const OS_IOS = 'ios' as const;
+export const OS_IOS = 'ios' as const
 
 /**
- * OS: Unknown
+ * 操作系统：未知
  */
-export const OS_UNKNOWN = 'unknown' as const;
+export const OS_UNKNOWN = 'unknown' as const
 
-// ========== Platform Types ==========
+// ========== 平台类型 ==========
 
 /**
- * Platform: Browser
+ * 平台：浏览器
  */
-export const PLATFORM_BROWSER = 'browser' as const;
+export const PLATFORM_BROWSER = 'browser' as const
 
 /**
- * Platform: Node.js
+ * 平台：Node.js
  */
-export const PLATFORM_NODE = 'node' as const;
+export const PLATFORM_NODE = 'node' as const
 
 /**
- * Platform: Web Worker
+ * 平台：Web Worker
  */
-export const PLATFORM_WEB_WORKER = 'web-worker' as const;
+export const PLATFORM_WEB_WORKER = 'web-worker' as const
 
 /**
- * Platform: React Native
+ * 平台：React Native
  */
-export const PLATFORM_REACT_NATIVE = 'react-native' as const;
+export const PLATFORM_REACT_NATIVE = 'react-native' as const
 
 /**
- * Platform: WeChat Mini Program
+ * 平台：微信小程序
  */
-export const PLATFORM_WX_MINIPROGRAM = 'wx-miniprogram' as const;
+export const PLATFORM_WX_MINIPROGRAM = 'wx-miniprogram' as const
 
-// ========== Network Types ==========
+// ========== 网络类型 ==========
 
 /**
- * Network: Ethernet
+ * 网络：以太网
  */
-export const NETWORK_TYPE_ETHERNET = 'ethernet' as const;
+export const NETWORK_TYPE_ETHERNET = 'ethernet' as const
 
 /**
- * Network: WiFi
+ * 网络：WiFi
  */
-export const NETWORK_TYPE_WIFI = 'wifi' as const;
+export const NETWORK_TYPE_WIFI = 'wifi' as const
 
 /**
- * Network: 2G
+ * 网络：2G
  */
-export const NETWORK_TYPE_2G = '2g' as const;
+export const NETWORK_TYPE_2G = '2g' as const
 
 /**
- * Network: 3G
+ * 网络：3G
  */
-export const NETWORK_TYPE_3G = '3g' as const;
+export const NETWORK_TYPE_3G = '3g' as const
 
 /**
- * Network: 4G
+ * 网络：4G
  */
-export const NETWORK_TYPE_4G = '4g' as const;
+export const NETWORK_TYPE_4G = '4g' as const
 
 /**
- * Network: 5G
+ * 网络：5G
  */
-export const NETWORK_TYPE_5G = '5g' as const;
+export const NETWORK_TYPE_5G = '5g' as const
 
 /**
- * Network: Unknown
+ * 网络：未知
  */
-export const NETWORK_TYPE_UNKNOWN = 'unknown' as const;
+export const NETWORK_TYPE_UNKNOWN = 'unknown' as const
 
-// ========== Screen Categories ==========
+// ========== 屏幕分类 ==========
 
 /**
- * Screen: Extra Small (< 576px)
+ * 屏幕：超小屏 (< 576px)
  */
-export const SCREEN_XS = 'xs' as const;
+export const SCREEN_XS = 'xs' as const
 
 /**
- * Screen: Small (≥ 576px)
+ * 屏幕：小屏 (≥ 576px)
  */
-export const SCREEN_SM = 'sm' as const;
+export const SCREEN_SM = 'sm' as const
 
 /**
- * Screen: Medium (≥ 768px)
+ * 屏幕：中屏 (≥ 768px)
  */
-export const SCREEN_MD = 'md' as const;
+export const SCREEN_MD = 'md' as const
 
 /**
- * Screen: Large (≥ 992px)
+ * 屏幕：大屏 (≥ 992px)
  */
-export const SCREEN_LG = 'lg' as const;
+export const SCREEN_LG = 'lg' as const
 
 /**
- * Screen: Extra Large (≥ 1200px)
+ * 屏幕：超大屏 (≥ 1200px)
  */
-export const SCREEN_XL = 'xl' as const;
+export const SCREEN_XL = 'xl' as const
 
 /**
- * Screen: Extra Extra Large (≥ 1400px)
+ * 屏幕：超超大屏 (≥ 1400px)
  */
-export const SCREEN_XXL = 'xxl' as const;
+export const SCREEN_XXL = 'xxl' as const
 
-// ========== Breakpoint Values ==========
+// ========== 断点值 ==========
 
 /**
- * Breakpoint: Extra Small (0px)
+ * 断点：超小屏 (0px)
  */
-export const BREAKPOINT_XS = 0;
+export const BREAKPOINT_XS = 0
 
 /**
- * Breakpoint: Small (576px)
+ * 断点：小屏 (576px)
  */
-export const BREAKPOINT_SM = 576;
+export const BREAKPOINT_SM = 576
 
 /**
- * Breakpoint: Medium (768px)
+ * 断点：中屏 (768px)
  */
-export const BREAKPOINT_MD = 768;
+export const BREAKPOINT_MD = 768
 
 /**
- * Breakpoint: Large (992px)
+ * 断点：大屏 (992px)
  */
-export const BREAKPOINT_LG = 992;
+export const BREAKPOINT_LG = 992
 
 /**
- * Breakpoint: Extra Large (1200px)
+ * 断点：超大屏 (1200px)
  */
-export const BREAKPOINT_XL = 1200;
+export const BREAKPOINT_XL = 1200
 
 /**
- * Breakpoint: Extra Extra Large (1400px)
+ * 断点：超超大屏 (1400px)
  */
-export const BREAKPOINT_XXL = 1400;
+export const BREAKPOINT_XXL = 1400
 
 /**
- * All breakpoint values in order
+ * 所有断点值的有序数组
  */
 export const BREAKPOINTS = [
   BREAKPOINT_XS,
@@ -235,49 +235,49 @@ export const BREAKPOINTS = [
   BREAKPOINT_LG,
   BREAKPOINT_XL,
   BREAKPOINT_XXL,
-] as const;
+] as const
 
-// ========== Device Capabilities ==========
+// ========== 设备能力 ==========
 
 /**
- * Touch support capability
+ * 能力：触摸支持
  */
-export const CAPABILITY_TOUCH = 'touch' as const;
+export const CAPABILITY_TOUCH = 'touch' as const
 
 /**
- * Hover support capability
+ * 能力：悬停支持
  */
-export const CAPABILITY_HOVER = 'hover' as const;
+export const CAPABILITY_HOVER = 'hover' as const
 
 /**
- * Pointer support capability
+ * 能力：指针支持
  */
-export const CAPABILITY_POINTER = 'pointer' as const;
+export const CAPABILITY_POINTER = 'pointer' as const
 
-// ========== Orientation Types ==========
+// ========== 屏幕方向 ==========
 
 /**
- * Orientation: Portrait
+ * 方向：竖屏
  */
-export const ORIENTATION_PORTRAIT = 'portrait' as const;
+export const ORIENTATION_PORTRAIT = 'portrait' as const
 
 /**
- * Orientation: Landscape
+ * 方向：横屏
  */
-export const ORIENTATION_LANDSCAPE = 'landscape' as const;
+export const ORIENTATION_LANDSCAPE = 'landscape' as const
 
 /**
- * All device type constants
+ * 所有设备类型常量
  */
 export const DEVICE_TYPES = [
   DEVICE_TYPE_MOBILE,
   DEVICE_TYPE_TABLET,
   DEVICE_TYPE_DESKTOP,
   DEVICE_TYPE_UNKNOWN,
-] as const;
+] as const
 
 /**
- * All browser type constants
+ * 所有浏览器类型常量
  */
 export const BROWSER_TYPES = [
   BROWSER_CHROME,
@@ -287,10 +287,10 @@ export const BROWSER_TYPES = [
   BROWSER_OPERA,
   BROWSER_IE,
   BROWSER_UNKNOWN,
-] as const;
+] as const
 
 /**
- * All operating system constants
+ * 所有操作系统常量
  */
 export const OPERATING_SYSTEMS = [
   OS_WINDOWS,
@@ -299,10 +299,10 @@ export const OPERATING_SYSTEMS = [
   OS_ANDROID,
   OS_IOS,
   OS_UNKNOWN,
-] as const;
+] as const
 
 /**
- * All platform type constants
+ * 所有平台类型常量
  */
 export const PLATFORM_TYPES = [
   PLATFORM_BROWSER,
@@ -310,4 +310,4 @@ export const PLATFORM_TYPES = [
   PLATFORM_WEB_WORKER,
   PLATFORM_REACT_NATIVE,
   PLATFORM_WX_MINIPROGRAM,
-] as const;
+] as const

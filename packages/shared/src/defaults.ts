@@ -1,160 +1,148 @@
+import type { InitOptions } from '@simple-monitor/types'
+
 /**
- * Default Configuration Options
+ * 默认配置选项
  *
- * Default values for SDK initialization options.
- * These are applied when user doesn't provide custom values.
+ * SDK 初始化选项的默认值。
+ * 当用户未提供自定义值时应用这些默认值。
  *
  * @module defaults
  */
 
 /**
- * Default maximum number of breadcrumbs to keep
+ * 默认最大面包屑数量
  */
-export const DEFAULT_MAX_BREADCRUMBS = 10;
+export const DEFAULT_MAX_BREADCRUMBS = 10
 
 /**
- * Default minimum number of breadcrumbs to keep
+ * 默认最小面包屑数量
  */
-export const DEFAULT_MIN_BREADCRUMBS = 5;
+export const DEFAULT_MIN_BREADCRUMBS = 5
 
 /**
- * Default throttle delay for high-frequency events (milliseconds)
+ * 默认高频事件节流延迟（毫秒）
  */
-export const DEFAULT_THROTTLE_DELAY = 100;
+export const DEFAULT_THROTTLE_DELAY = 100
 
 /**
- * Default debounce delay for search/input events (milliseconds)
+ * 默认搜索/输入事件防抖延迟（毫秒）
  */
-export const DEFAULT_DEBOUNCE_DELAY = 300;
+export const DEFAULT_DEBOUNCE_DELAY = 300
 
 /**
- * Default request timeout (milliseconds)
+ * 默认请求超时时间（毫秒）
  */
-export const DEFAULT_REQUEST_TIMEOUT = 10000;
+export const DEFAULT_REQUEST_TIMEOUT = 10000
 
 /**
- * Default maximum number of retries for failed requests
+ * 默认失败请求的最大重试次数
  */
-export const DEFAULT_MAX_RETRIES = 3;
+export const DEFAULT_MAX_RETRIES = 3
 
 /**
- * Default retry delay base (milliseconds)
+ * 默认重试延迟基数（毫秒）
  */
-export const DEFAULT_RETRY_DELAY = 1000;
+export const DEFAULT_RETRY_DELAY = 1000
 
 /**
- * Default maximum stack trace depth
+ * 默认最大堆栈跟踪深度
  */
-export const DEFAULT_MAX_STACK_DEPTH = 20;
+export const DEFAULT_MAX_STACK_DEPTH = 20
 
 /**
- * Default maximum error message length
+ * 默认最大错误消息长度
  */
-export const DEFAULT_MAX_ERROR_MESSAGE_LENGTH = 2048;
+export const DEFAULT_MAX_ERROR_MESSAGE_LENGTH = 2048
 
 /**
- * Default maximum URL length to report
+ * 默认最大上报 URL 长度
  */
-export const DEFAULT_MAX_URL_LENGTH = 2000;
+export const DEFAULT_MAX_URL_LENGTH = 2000
 
 /**
- * Default maximum parameter value length
+ * 默认最大参数值长度
  */
-export const DEFAULT_MAX_PARAM_LENGTH = 512;
+export const DEFAULT_MAX_PARAM_LENGTH = 512
 
 /**
- * Default maximum body length to report
+ * 默认最大上报 body 长度
  */
-export const DEFAULT_MAX_BODY_LENGTH = 4096;
+export const DEFAULT_MAX_BODY_LENGTH = 4096
 
 /**
- * Default sample rate (0-1), 1 means report everything
+ * 默认采样率（0-1），1 表示全部上报
  */
-export const DEFAULT_SAMPLE_RATE = 1;
+export const DEFAULT_SAMPLE_RATE = 1
 
 /**
- * Default before unload timeout (milliseconds)
+ * 默认 before unload 超时时间（毫秒）
  */
-export const DEFAULT_BEFORE_UNLOAD_TIMEOUT = 5000;
+export const DEFAULT_BEFORE_UNLOAD_TIMEOUT = 5000
 
 /**
- * Default flush interval for batch reporting (milliseconds)
+ * 默认批量上报刷新间隔（毫秒）
  */
-export const DEFAULT_FLUSH_INTERVAL = 5000;
+export const DEFAULT_FLUSH_INTERVAL = 5000
 
 /**
- * Default maximum batch size for reporting
+ * 默认批量上报最大批次大小
  */
-export const DEFAULT_MAX_BATCH_SIZE = 10;
+export const DEFAULT_MAX_BATCH_SIZE = 10
 
 /**
- * Default silent mode (no console output)
+ * 默认静默模式（无控制台输出）
  */
-export const DEFAULT_SILENT_MODE = true;
+export const DEFAULT_SILENT_MODE = true
 
 /**
- * Default debug mode
+ * 默认调试模式
  */
-export const DEFAULT_DEBUG_MODE = false;
+export const DEFAULT_DEBUG_MODE = false
 
 /**
- * Default enable error tracking
+ * 默认启用错误追踪
  */
-export const DEFAULT_ENABLE_ERROR_TRACKING = true;
+export const DEFAULT_ENABLE_ERROR_TRACKING = true
 
 /**
- * Default enable performance tracking
+ * 默认启用性能追踪
  */
-export const DEFAULT_ENABLE_PERFORMANCE_TRACKING = true;
+export const DEFAULT_ENABLE_PERFORMANCE_TRACKING = true
 
 /**
- * Default enable HTTP tracking
+ * 默认启用 HTTP 追踪
  */
-export const DEFAULT_ENABLE_HTTP_TRACKING = true;
+export const DEFAULT_ENABLE_HTTP_TRACKING = true
 
 /**
- * Default enable user interaction tracking
+ * 默认启用用户交互追踪
  */
-export const DEFAULT_ENABLE_INTERACTION_TRACKING = true;
+export const DEFAULT_ENABLE_INTERACTION_TRACKING = true
 
 /**
- * Default enable route change tracking
+ * 默认启用路由变化追踪
  */
-export const DEFAULT_ENABLE_ROUTE_TRACKING = true;
+export const DEFAULT_ENABLE_ROUTE_TRACKING = true
 
 /**
- * Default enable console tracking
+ * 默认启用控制台追踪
  */
-export const DEFAULT_ENABLE_CONSOLE_TRACKING = false;
+export const DEFAULT_ENABLE_CONSOLE_TRACKING = false
 
 /**
- * Default use image upload (vs XHR POST)
+ * 默认使用图片上传（而非 XHR POST）
  */
-export const DEFAULT_USE_IMAGE_UPLOAD = false;
+export const DEFAULT_USE_IMAGE_UPLOAD = false
 
 /**
- * Default enable automatic error tracking
+ * 默认启用自动追踪
  */
-export const DEFAULT_ENABLE_AUTO_TRACK = true;
+export const DEFAULT_ENABLE_AUTO_TRACK = true
 
 /**
- * Default options interface (inline definition to avoid circular dependency)
+ * 完整的默认选项对象
  */
-export interface DefaultOptions {
-  maxBreadcrumbs?: number;
-  throttleDelayTime?: number;
-  useImageUpload?: boolean;
-  enableErrorTracking?: boolean;
-  enablePerformanceTracking?: boolean;
-  enableHttpTracking?: boolean;
-  silent?: boolean;
-  debug?: boolean;
-}
-
-/**
- * Complete default options object
- */
-export const DEFAULT_OPTIONS: DefaultOptions = {
+export const DEFAULT_OPTIONS: Partial<InitOptions> = {
   maxBreadcrumbs: DEFAULT_MAX_BREADCRUMBS,
   throttleDelayTime: DEFAULT_THROTTLE_DELAY,
   useImageUpload: DEFAULT_USE_IMAGE_UPLOAD,
@@ -163,4 +151,4 @@ export const DEFAULT_OPTIONS: DefaultOptions = {
   enableHttpTracking: DEFAULT_ENABLE_HTTP_TRACKING,
   silent: DEFAULT_SILENT_MODE,
   debug: DEFAULT_DEBUG_MODE,
-};
+}

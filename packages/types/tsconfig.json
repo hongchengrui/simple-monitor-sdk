@@ -1,12 +1,11 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "composite": true,
     "outDir": "./dist",
     "rootDir": "./src",
     "lib": ["ES2020", "DOM"],
-    "declarationMap": true
+    "composite": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*.ts", "src/**/*.d.ts"],
   "exclude": ["node_modules", "dist", "**/*.test.ts"]
 }

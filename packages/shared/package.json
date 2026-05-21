@@ -2,13 +2,13 @@
   "name": "@simple-monitor/shared",
   "version": "1.0.0",
   "description": "Shared constants and utilities for Simple Monitor SDK",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.mjs"
     }
   },
   "files": [
@@ -21,8 +21,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@simple-monitor/types": "workspace:*",
-    "@simple-monitor/utils": "workspace:*"
+    "@simple-monitor/types": "workspace:*"
   },
   "keywords": [
     "monitor",

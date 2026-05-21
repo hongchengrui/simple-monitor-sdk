@@ -4,5 +4,4 @@
  * This package contains web performance monitoring capabilities.
  */
 
-// Placeholder - performance logic will be implemented in the next step
-export {};
+export * from './types'

@@ -7,16 +7,35 @@
  */
 
 // Error types
-export * from './error';
+export * from './error'
 
 // Event types
-export * from './event';
+export * from './eventTypes'
 
 // Breadcrumb types
-export * from './breadcrumb';
+export * from './breadcrumb'
 
-// HTTP types
-export * from './http';
+// Device types
+export * from './device'
 
-// Core data types
-export * from './core';
+export * from './httpConstants'
+
+// Severity enum and utilities
+export * from './Severity'
+
+// Common types
+export * from './common'
+
+// Replace types
+export * from './replace'
+
+// Track types
+export * from './track'
+
+// Transport data types
+export * from './transportData'
+
+// Options types
+export * from './options'
+
+export * from './global-support'

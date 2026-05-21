@@ -1,360 +1,360 @@
 /**
- * Error Message Constants
+ * 错误消息常量
  *
- * Standardized error messages used across the SDK.
+ * SDK 中使用的标准化错误消息。
  *
  * @module messages
  */
 
-// ========== Initialization Errors ==========
+// ========== 初始化错误 ==========
 
 /**
- * Error: SDK not initialized
+ * 错误：SDK 未初始化
  */
-export const ERROR_NOT_INITIALIZED = 'SimpleMonitor SDK is not initialized. Call init() first.';
+export const ERROR_NOT_INITIALIZED = 'SimpleMonitor SDK is not initialized. Call init() first.'
 
 /**
- * Error: SDK already initialized
+ * 错误：SDK 已初始化
  */
-export const ERROR_ALREADY_INITIALIZED = 'SimpleMonitor SDK is already initialized.';
+export const ERROR_ALREADY_INITIALIZED = 'SimpleMonitor SDK is already initialized.'
 
 /**
- * Error: Invalid DSN provided
+ * 错误：提供的 DSN 无效
  */
-export const ERROR_INVALID_DSN = 'Invalid DSN provided. DSN must be a valid URL.';
+export const ERROR_INVALID_DSN = 'Invalid DSN provided. DSN must be a valid URL.'
 
 /**
- * Error: Missing required option
+ * 错误：缺少必需选项
  */
-export const ERROR_MISSING_REQUIRED_OPTION = 'Missing required option: ';
+export const ERROR_MISSING_REQUIRED_OPTION = 'Missing required option: '
 
 /**
- * Error: Invalid option type
+ * 错误：选项类型无效
  */
-export const ERROR_INVALID_OPTION_TYPE = 'Invalid type for option: ';
+export const ERROR_INVALID_OPTION_TYPE = 'Invalid type for option: '
 
-// ========== Configuration Errors ==========
+// ========== 配置错误 ==========
 
 /**
- * Error: Invalid configuration
+ * 错误：配置无效
  */
-export const ERROR_INVALID_CONFIG = 'Invalid SDK configuration.';
+export const ERROR_INVALID_CONFIG = 'Invalid SDK configuration.'
 
 /**
- * Error: Configuration parse failed
+ * 错误：配置解析失败
  */
-export const ERROR_CONFIG_PARSE_FAILED = 'Failed to parse SDK configuration.';
+export const ERROR_CONFIG_PARSE_FAILED = 'Failed to parse SDK configuration.'
 
 /**
- * Error: Sample rate out of range
+ * 错误：采样率超出范围
  */
-export const ERROR_SAMPLE_RATE_OUT_OF_RANGE = 'Sample rate must be between 0 and 1.';
+export const ERROR_SAMPLE_RATE_OUT_OF_RANGE = 'Sample rate must be between 0 and 1.'
 
-// ========== Upload Errors ==========
+// ========== 上传错误 ==========
 
 /**
- * Error: Upload failed
+ * 错误：上传失败
  */
-export const ERROR_UPLOAD_FAILED = 'Failed to upload data to server.';
+export const ERROR_UPLOAD_FAILED = 'Failed to upload data to server.'
 
 /**
- * Error: Network error
+ * 错误：网络错误
  */
-export const ERROR_NETWORK_ERROR = 'Network error occurred.';
+export const ERROR_NETWORK_ERROR = 'Network error occurred.'
 
 /**
- * Error: Request timeout
+ * 错误：请求超时
  */
-export const ERROR_REQUEST_TIMEOUT = 'Request timed out.';
+export const ERROR_REQUEST_TIMEOUT = 'Request timed out.'
 
 /**
- * Error: Server responded with error
+ * 错误：服务器响应错误
  */
-export const ERROR_SERVER_ERROR = 'Server responded with error.';
+export const ERROR_SERVER_ERROR = 'Server responded with error.'
 
 /**
- * Error: Rate limited
+ * 错误：请求被限流
  */
-export const ERROR_RATE_LIMITED = 'Request rate limited.';
+export const ERROR_RATE_LIMITED = 'Request rate limited.'
 
 /**
- * Error: Payload too large
+ * 错误：载荷过大
  */
-export const ERROR_PAYLOAD_TOO_LARGE = 'Upload payload too large.';
+export const ERROR_PAYLOAD_TOO_LARGE = 'Upload payload too large.'
 
 /**
- * Error: Unauthorized
+ * 错误：未授权
  */
-export const ERROR_UNAUTHORIZED = 'Unauthorized access. Check your API key.';
+export const ERROR_UNAUTHORIZED = 'Unauthorized access. Check your API key.'
 
-// ========== Data Processing Errors ==========
+// ========== 数据处理错误 ==========
 
 /**
- * Error: Invalid data format
+ * 错误：数据格式无效
  */
-export const ERROR_INVALID_DATA_FORMAT = 'Invalid data format.';
+export const ERROR_INVALID_DATA_FORMAT = 'Invalid data format.'
 
 /**
- * Error: Missing required field
+ * 错误：缺少必需字段
  */
-export const ERROR_MISSING_REQUIRED_FIELD = 'Missing required field: ';
+export const ERROR_MISSING_REQUIRED_FIELD = 'Missing required field: '
 
 /**
- * Error: Data transformation failed
+ * 错误：数据转换失败
  */
-export const ERROR_TRANSFORM_FAILED = 'Failed to transform data.';
+export const ERROR_TRANSFORM_FAILED = 'Failed to transform data.'
 
 /**
- * Error: Data serialization failed
+ * 错误：数据序列化失败
  */
-export const ERROR_SERIALIZATION_FAILED = 'Failed to serialize data.';
+export const ERROR_SERIALIZATION_FAILED = 'Failed to serialize data.'
 
 /**
- * Error: Stack trace parsing failed
+ * 错误：堆栈跟踪解析失败
  */
-export const ERROR_STACK_PARSE_FAILED = 'Failed to parse stack trace.';
+export const ERROR_STACK_PARSE_FAILED = 'Failed to parse stack trace.'
 
-// ========== Breadcrumb Errors ==========
+// ========== 面包屑错误 ==========
 
 /**
- * Error: Breadcrumb limit exceeded
+ * 错误：面包屑数量超限
  */
-export const ERROR_BREADCRUMB_LIMIT_EXCEEDED = 'Breadcrumb limit exceeded.';
+export const ERROR_BREADCRUMB_LIMIT_EXCEEDED = 'Breadcrumb limit exceeded.'
 
 /**
- * Error: Invalid breadcrumb data
+ * 错误：面包屑数据无效
  */
-export const ERROR_INVALID_BREADCRUMB = 'Invalid breadcrumb data.';
+export const ERROR_INVALID_BREADCRUMB = 'Invalid breadcrumb data.'
 
-// ========== Event Handling Errors ==========
+// ========== 事件处理错误 ==========
 
 /**
- * Error: Event handler not found
+ * 错误：未找到事件处理器
  */
-export const ERROR_HANDLER_NOT_FOUND = 'Event handler not found: ';
+export const ERROR_HANDLER_NOT_FOUND = 'Event handler not found: '
 
 /**
- * Error: Event handler registration failed
+ * 错误：事件处理器注册失败
  */
-export const ERROR_HANDLER_REGISTRATION_FAILED = 'Failed to register event handler.';
+export const ERROR_HANDLER_REGISTRATION_FAILED = 'Failed to register event handler.'
 
 /**
- * Error: Event type not supported
+ * 错误：不支持的事件类型
  */
-export const ERROR_EVENT_TYPE_NOT_SUPPORTED = 'Event type not supported: ';
+export const ERROR_EVENT_TYPE_NOT_SUPPORTED = 'Event type not supported: '
 
 /**
- * Error: Too many event handlers
+ * 错误：事件处理器过多
  */
-export const ERROR_TOO_MANY_HANDLERS = 'Too many event handlers registered.';
+export const ERROR_TOO_MANY_HANDLERS = 'Too many event handlers registered.'
 
-// ========== Performance Errors ==========
+// ========== 性能错误 ==========
 
 /**
- * Error: Performance API not supported
+ * 错误：不支持 Performance API
  */
-export const ERROR_PERFORMANCE_NOT_SUPPORTED = 'Performance API not supported in this environment.';
+export const ERROR_PERFORMANCE_NOT_SUPPORTED = 'Performance API not supported in this environment.'
 
 /**
- * Error: Performance entry not found
+ * 错误：未找到性能条目
  */
-export const ERROR_PERFORMANCE_ENTRY_NOT_FOUND = 'Performance entry not found: ';
+export const ERROR_PERFORMANCE_ENTRY_NOT_FOUND = 'Performance entry not found: '
 
 /**
- * Error: Performance timing invalid
+ * 错误：性能计时无效
  */
-export const ERROR_PERFORMANCE_TIMING_INVALID = 'Invalid performance timing data.';
+export const ERROR_PERFORMANCE_TIMING_INVALID = 'Invalid performance timing data.'
 
-// ========== Interceptor Errors ==========
+// ========== 拦截器错误 ==========
 
 /**
- * Error: Method replacement failed
+ * 错误：方法替换失败
  */
-export const ERROR_METHOD_REPLACEMENT_FAILED = 'Failed to replace method: ';
+export const ERROR_METHOD_REPLACEMENT_FAILED = 'Failed to replace method: '
 
 /**
- * Error: Method not found
+ * 错误：未找到方法
  */
-export const ERROR_METHOD_NOT_FOUND = 'Method not found: ';
+export const ERROR_METHOD_NOT_FOUND = 'Method not found: '
 
 /**
- * Error: Method already replaced
+ * 错误：方法已被替换
  */
-export const ERROR_METHOD_ALREADY_REPLACED = 'Method already replaced: ';
+export const ERROR_METHOD_ALREADY_REPLACED = 'Method already replaced: '
 
-// ========== Queue Errors ==========
+// ========== 队列错误 ==========
 
 /**
- * Error: Queue is full
+ * 错误：队列已满
  */
-export const ERROR_QUEUE_FULL = 'Event queue is full.';
+export const ERROR_QUEUE_FULL = 'Event queue is full.'
 
 /**
- * Error: Queue flush failed
+ * 错误：队列刷新失败
  */
-export const ERROR_QUEUE_FLUSH_FAILED = 'Failed to flush event queue.';
+export const ERROR_QUEUE_FLUSH_FAILED = 'Failed to flush event queue.'
 
 /**
- * Error: Queue processing error
+ * 错误：队列处理错误
  */
-export const ERROR_QUEUE_PROCESSING_ERROR = 'Error processing queued events.';
+export const ERROR_QUEUE_PROCESSING_ERROR = 'Error processing queued events.'
 
-// ========== Storage Errors ==========
+// ========== 存储错误 ==========
 
 /**
- * Error: Storage not available
+ * 错误：存储不可用
  */
-export const ERROR_STORAGE_NOT_AVAILABLE = 'Storage not available in this environment.';
+export const ERROR_STORAGE_NOT_AVAILABLE = 'Storage not available in this environment.'
 
 /**
- * Error: Storage quota exceeded
+ * 错误：存储配额超限
  */
-export const ERROR_STORAGE_QUOTA_EXCEEDED = 'Storage quota exceeded.';
+export const ERROR_STORAGE_QUOTA_EXCEEDED = 'Storage quota exceeded.'
 
 /**
- * Error: Storage access denied
+ * 错误：存储访问被拒绝
  */
-export const ERROR_STORAGE_ACCESS_DENIED = 'Storage access denied.';
+export const ERROR_STORAGE_ACCESS_DENIED = 'Storage access denied.'
 
 /**
- * Error: Storage read failed
+ * 错误：存储读取失败
  */
-export const ERROR_STORAGE_READ_FAILED = 'Failed to read from storage.';
+export const ERROR_STORAGE_READ_FAILED = 'Failed to read from storage.'
 
 /**
- * Error: Storage write failed
+ * 错误：存储写入失败
  */
-export const ERROR_STORAGE_WRITE_FAILED = 'Failed to write to storage.';
+export const ERROR_STORAGE_WRITE_FAILED = 'Failed to write to storage.'
 
-// ========== Validation Errors ==========
+// ========== 验证错误 ==========
 
 /**
- * Error: Invalid URL
+ * 错误：URL 无效
  */
-export const ERROR_INVALID_URL = 'Invalid URL: ';
+export const ERROR_INVALID_URL = 'Invalid URL: '
 
 /**
- * Error: Invalid timestamp
+ * 错误：时间戳无效
  */
-export const ERROR_INVALID_TIMESTAMP = 'Invalid timestamp: ';
+export const ERROR_INVALID_TIMESTAMP = 'Invalid timestamp: '
 
 /**
- * Error: Invalid user ID
+ * 错误：用户 ID 无效
  */
-export const ERROR_INVALID_USER_ID = 'Invalid user ID.';
+export const ERROR_INVALID_USER_ID = 'Invalid user ID.'
 
 /**
- * Error: Invalid tracker ID
+ * 错误：追踪器 ID 无效
  */
-export const ERROR_INVALID_TRACKER_ID = 'Invalid tracker ID.';
+export const ERROR_INVALID_TRACKER_ID = 'Invalid tracker ID.'
 
-// ========== Warning Messages ==========
+// ========== 警告消息 ==========
 
 /**
- * Warning: Debug mode enabled
+ * 警告：调试模式已启用
  */
-export const WARNING_DEBUG_MODE = 'SimpleMonitor debug mode is enabled.';
+export const WARNING_DEBUG_MODE = 'SimpleMonitor debug mode is enabled.'
 
 /**
- * Warning: Deprecation notice
+ * 警告：弃用通知
  */
-export const WARNING_DEPRECATED = 'Feature is deprecated and will be removed in a future version: ';
+export const WARNING_DEPRECATED = 'Feature is deprecated and will be removed in a future version: '
 
 /**
- * Warning: Silent mode enabled
+ * 警告：静默模式已启用
  */
-export const WARNING_SILENT_MODE = 'SimpleMonitor is running in silent mode.';
+export const WARNING_SILENT_MODE = 'SimpleMonitor is running in silent mode.'
 
 /**
- * Warning: Sample rate will drop data
+ * 警告：采样率将丢弃数据
  */
-export const WARNING_SAMPLE_RATE = 'Sample rate is less than 1, some data will be dropped.';
+export const WARNING_SAMPLE_RATE = 'Sample rate is less than 1, some data will be dropped.'
 
 /**
- * Warning: Auto-track disabled
+ * 警告：自动追踪已禁用
  */
-export const WARNING_AUTO_TRACK_DISABLED = 'Automatic tracking is disabled.';
+export const WARNING_AUTO_TRACK_DISABLED = 'Automatic tracking is disabled.'
 
 /**
- * Warning: Feature not supported
+ * 警告：当前环境不支持该功能
  */
-export const WARNING_FEATURE_NOT_SUPPORTED = 'Feature not supported in current environment: ';
+export const WARNING_FEATURE_NOT_SUPPORTED = 'Feature not supported in current environment: '
 
-// ========== Info Messages ==========
+// ========== 信息消息 ==========
 
 /**
- * Info: SDK initialized
+ * 信息：SDK 已初始化
  */
-export const INFO_SDK_INITIALIZED = 'SimpleMonitor SDK initialized successfully.';
+export const INFO_SDK_INITIALIZED = 'SimpleMonitor SDK initialized successfully.'
 
 /**
- * Info: SDK destroyed
+ * 信息：SDK 已销毁
  */
-export const INFO_SDK_DESTROYED = 'SimpleMonitor SDK destroyed.';
+export const INFO_SDK_DESTROYED = 'SimpleMonitor SDK destroyed.'
 
 /**
- * Info: Data uploaded
+ * 信息：数据已上传
  */
-export const INFO_DATA_UPLOADED = 'Data uploaded successfully.';
+export const INFO_DATA_UPLOADED = 'Data uploaded successfully.'
 
 /**
- * Info: Event captured
+ * 信息：事件已捕获
  */
-export const INFO_EVENT_CAPTURED = 'Event captured: ';
+export const INFO_EVENT_CAPTURED = 'Event captured: '
 
 /**
- * Info: User identified
+ * 信息：用户已识别
  */
-export const INFO_USER_IDENTIFIED = 'User identified: ';
+export const INFO_USER_IDENTIFIED = 'User identified: '
 
 /**
- * Info: Session started
+ * 信息：会话已开始
  */
-export const INFO_SESSION_STARTED = 'Session started.';
+export const INFO_SESSION_STARTED = 'Session started.'
 
 /**
- * Info: Session ended
+ * 信息：会话已结束
  */
-export const INFO_SESSION_ENDED = 'Session ended.';
+export const INFO_SESSION_ENDED = 'Session ended.'
 
-// ========== Error Categories ==========
+// ========== 错误类别 ==========
 
 /**
- * Error category: Initialization
+ * 错误类别：初始化
  */
-export const ERROR_CATEGORY_INIT = 'init';
+export const ERROR_CATEGORY_INIT = 'init'
 
 /**
- * Error category: Configuration
+ * 错误类别：配置
  */
-export const ERROR_CATEGORY_CONFIG = 'config';
+export const ERROR_CATEGORY_CONFIG = 'config'
 
 /**
- * Error category: Network
+ * 错误类别：网络
  */
-export const ERROR_CATEGORY_NETWORK = 'network';
+export const ERROR_CATEGORY_NETWORK = 'network'
 
 /**
- * Error category: Data
+ * 错误类别：数据
  */
-export const ERROR_CATEGORY_DATA = 'data';
+export const ERROR_CATEGORY_DATA = 'data'
 
 /**
- * Error category: Validation
+ * 错误类别：验证
  */
-export const ERROR_CATEGORY_VALIDATION = 'validation';
+export const ERROR_CATEGORY_VALIDATION = 'validation'
 
 /**
- * Error category: Storage
+ * 错误类别：存储
  */
-export const ERROR_CATEGORY_STORAGE = 'storage';
+export const ERROR_CATEGORY_STORAGE = 'storage'
 
 /**
- * Error category: Performance
+ * 错误类别：性能
  */
-export const ERROR_CATEGORY_PERFORMANCE = 'performance';
+export const ERROR_CATEGORY_PERFORMANCE = 'performance'
 
 /**
- * Error category: Unknown
+ * 错误类别：未知
  */
-export const ERROR_CATEGORY_UNKNOWN = 'unknown';
+export const ERROR_CATEGORY_UNKNOWN = 'unknown'

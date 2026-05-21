@@ -1,143 +1,143 @@
 /**
- * Global Configuration Constants
+ * 全局配置常量
  *
- * Global constants used across the SDK configuration.
+ * SDK 配置中使用的全局常量。
  *
  * @module config
  */
 
 /**
- * Default DSN (Data Source Name) placeholder
+ * 默认 DSN（数据源名称）占位符
  */
-export const DEFAULT_DSN = '';
+export const DEFAULT_DSN = ''
 
 /**
- * Default track DSN placeholder
+ * 默认追踪 DSN 占位符
  */
-export const DEFAULT_TRACK_DSN = '';
+export const DEFAULT_TRACK_DSN = ''
 
 /**
- * Default API key placeholder
+ * 默认 API 密钥占位符
  */
-export const DEFAULT_API_KEY = '';
+export const DEFAULT_API_KEY = ''
 
 /**
- * Default track key placeholder
+ * 默认追踪密钥占位符
  */
-export const DEFAULT_TRACK_KEY = '';
+export const DEFAULT_TRACK_KEY = ''
 
 /**
- * Maximum number of events to queue before forcing a flush
+ * 强制刷新队列前最大事件数量
  */
-export const MAX_QUEUE_SIZE = 100;
+export const MAX_QUEUE_SIZE = 100
 
 /**
- * Maximum number of breadcrumbs to store
+ * 最大存储面包屑数量
  */
-export const MAX_BREADCRUMB_LIMIT = 50;
+export const MAX_BREADCRUMB_LIMIT = 50
 
 /**
- * Maximum number of stack frames to capture
+ * 最大捕获堆栈帧数量
  */
-export const MAX_STACK_FRAMES = 50;
+export const MAX_STACK_FRAMES = 50
 
 /**
- * Maximum number of event handlers per event type
+ * 每种事件类型的最大处理器数量
  */
-export const MAX_HANDLERS_PER_EVENT = 100;
+export const MAX_HANDLERS_PER_EVENT = 100
 
 /**
- * Maximum retry attempts for failed uploads
+ * 上传失败时的最大重试次数
  */
-export const MAX_UPLOAD_RETRIES = 3;
+export const MAX_UPLOAD_RETRIES = 3
 
 /**
- * Maximum size of upload payload in bytes (roughly 5MB)
+ * 上传载荷的最大大小（字节，约 5MB）
  */
-export const MAX_PAYLOAD_SIZE = 5 * 1024 * 1024;
+export const MAX_PAYLOAD_SIZE = 5 * 1024 * 1024
 
 /**
- * Minimum interval between auto-flushes (milliseconds)
+ * 自动刷新的最小间隔时间（毫秒）
  */
-export const MIN_FLUSH_INTERVAL = 1000;
+export const MIN_FLUSH_INTERVAL = 1000
 
 /**
- * Maximum interval between auto-flushes (milliseconds)
+ * 自动刷新的最大间隔时间（毫秒）
  */
-export const MAX_FLUSH_INTERVAL = 60000;
+export const MAX_FLUSH_INTERVAL = 60000
 
 /**
- * Page visibility change debounce time (milliseconds)
+ * 页面可见性变化防抖时间（毫秒）
  */
-export const VISIBILITY_CHANGE_DEBOUNCE = 250;
+export const VISIBILITY_CHANGE_DEBOUNCE = 250
 
 /**
- * Click event debounce time (milliseconds)
+ * 点击事件防抖时间（毫秒）
  */
-export const CLICK_DEBOUNCE_TIME = 500;
+export const CLICK_DEBOUNCE_TIME = 500
 
 /**
- * Scroll throttle time (milliseconds)
+ * 滚动事件节流时间（毫秒）
  */
-export const SCROLL_THROTTLE_TIME = 200;
+export const SCROLL_THROTTLE_TIME = 200
 
 /**
- * Resize throttle time (milliseconds)
+ * 窗口大小变化节流时间（毫秒）
  */
-export const RESIZE_THROTTLE_TIME = 200;
+export const RESIZE_THROTTLE_TIME = 200
 
 /**
- * Maximum length for console message logging
+ * 控制台消息日志的最大长度
  */
-export const MAX_CONSOLE_MESSAGE_LENGTH = 10000;
+export const MAX_CONSOLE_MESSAGE_LENGTH = 10000
 
 /**
- * Maximum number of console history entries to keep
+ * 保留的最大控制台历史记录条数
  */
-export const MAX_CONSOLE_HISTORY = 50;
+export const MAX_CONSOLE_HISTORY = 50
 
 /**
- * Maximum number of performance entries to collect
+ * 收集的最大性能条目数量
  */
-export const MAX_PERFORMANCE_ENTRIES = 100;
+export const MAX_PERFORMANCE_ENTRIES = 100
 
 /**
- * Maximum number of resource timing entries to collect
+ * 收集的最大资源计时条目数量
  */
-export const MAX_RESOURCE_ENTRIES = 100;
+export const MAX_RESOURCE_ENTRIES = 100
 
 /**
- * Default timeout for page load performance collection (milliseconds)
+ * 页面加载性能收集的默认超时时间（毫秒）
  */
-export const PAGE_LOAD_TIMEOUT = 10000;
+export const PAGE_LOAD_TIMEOUT = 10000
 
 /**
- * Default timeout for resource timing collection (milliseconds)
+ * 资源计时收集的默认超时时间（毫秒）
  */
-export const RESOURCE_TIMING_TIMEOUT = 5000;
+export const RESOURCE_TIMING_TIMEOUT = 5000
 
 /**
- * Maximum URL length for reporting
+ * 上报的最大 URL 长度
  */
-export const MAX_URL_LENGTH = 2000;
+export const MAX_URL_LENGTH = 2000
 
 /**
- * Maximum query string length for reporting
+ * 上报的最大查询字符串长度
  */
-export const MAX_QUERY_STRING_LENGTH = 500;
+export const MAX_QUERY_STRING_LENGTH = 500
 
 /**
- * Truncation indicator for truncated values
+ * 截断值的截断指示符
  */
-export const TRUNCATION_INDICATOR = '...';
+export const TRUNCATION_INDICATOR = '...'
 
 /**
- * Mask for sensitive data in headers
+ * 头部中敏感数据的掩码
  */
-export const SENSITIVE_HEADER_MASK = '[REDACTED]';
+export const SENSITIVE_HEADER_MASK = '[REDACTED]'
 
 /**
- * List of sensitive HTTP headers that should be masked
+ * 需要掩码的敏感 HTTP 头部列表
  */
 export const SENSITIVE_HEADERS: readonly string[] = [
   'authorization',
@@ -147,10 +147,10 @@ export const SENSITIVE_HEADERS: readonly string[] = [
   'x-auth-token',
   'x-csrf-token',
   'x-xsrf-token',
-] as const;
+] as const
 
 /**
- * List of sensitive query parameters that should be masked
+ * 需要掩码的敏感查询参数列表
  */
 export const SENSITIVE_QUERY_PARAMS: readonly string[] = [
   'password',
@@ -162,10 +162,10 @@ export const SENSITIVE_QUERY_PARAMS: readonly string[] = [
   'refresh_token',
   'session_token',
   'auth',
-] as const;
+] as const
 
 /**
- * User-agent strings to identify as
+ * 用于标识的 User-Agent 字符串
  */
 export const USER_AGENTS = {
   DEFAULT: 'SimpleMonitor/1.0',
@@ -175,10 +175,10 @@ export const USER_AGENTS = {
   PHP: 'SimpleMonitor-PHP/1.0',
   RUBY: 'SimpleMonitor-Ruby/1.0',
   GO: 'SimpleMonitor-Go/1.0',
-} as const;
+} as const
 
 /**
- * Content type headers
+ * Content-Type 头部
  */
 export const CONTENT_TYPES = {
   JSON: 'application/json',
@@ -186,10 +186,10 @@ export const CONTENT_TYPES = {
   MULTIPART_FORM_DATA: 'multipart/form-data',
   TEXT_PLAIN: 'text/plain',
   OCTET_STREAM: 'application/octet-stream',
-} as const;
+} as const
 
 /**
- * HTTP method constants
+ * HTTP 方法常量
  */
 export const HTTP_METHODS = {
   GET: 'GET',
@@ -201,10 +201,10 @@ export const HTTP_METHODS = {
   OPTIONS: 'OPTIONS',
   CONNECT: 'CONNECT',
   TRACE: 'TRACE',
-} as const;
+} as const
 
 /**
- * Request header names
+ * 请求头部名称
  */
 export const HEADERS = {
   ACCEPT: 'Accept',
@@ -222,4 +222,4 @@ export const HEADERS = {
   USER_AGENT: 'User-Agent',
   X_REQUESTED_WITH: 'X-Requested-With',
   X_MONITOR_SDK: 'X-Monitor-SDK',
-} as const;
+} as const

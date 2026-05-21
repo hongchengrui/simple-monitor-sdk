@@ -1,144 +1,113 @@
 /**
- * API Interceptor Utility
+ * API 拦截器工具
  *
- * Provides the ability to intercept/replace native methods with custom implementations.
- * This is used for monitoring purposes - wrapping native APIs to capture events.
+ * 提供拦截/替换原生方法为自定义实现的功能。
+ * 用于监控目的 - 包装原生 API 以捕获事件。
  *
  * @module interceptor
  */
 
 /**
- * Generic object type for flexible data structures
+ * 通用对象类型，用于灵活的数据结构
  */
-export type AnyObject = Record<string, any>;
+export type AnyObject = Record<string, any>
 
 /**
- * Callback type for the intercepted function
- * Receives the original function and returns the wrapped function
+ * 被拦截函数的回调类型
+ * 接收原始函数并返回包装后的函数
  */
-export type InterceptorCallback<T = any> = (original: T) => T;
+export type InterceptorCallback<T = any> = (original: T) => T
 
-/**
- * Replaces a method on an object with a wrapped version.
- *
- * This function saves the original method, wraps it with the provided callback,
- * and replaces it on the source object. This enables monitoring of native APIs.
- *
- * @param source - The object containing the method to replace (e.g., XMLHttpRequest.prototype)
- * @param name - The name of the method to replace (e.g., 'open', 'send')
- * @param replacement - A function that receives the original and returns the wrapped version
- * @param isForced - Force replacement even if the property doesn't exist on source
- *
- * @example
- * ```ts
- * // Intercept XMLHttpRequest.open
- * replaceOld(
- *   XMLHttpRequest.prototype,
- *   'open',
- *   (originalOpen) => {
- *     return function(this: MonitorXHR, ...args: any[]) {
- *       // Monitoring logic here
- *       console.log('XHR opened', args);
- *       return originalOpen.apply(this, args);
- *     };
- *   }
- * );
- * ```
- */
 export function replaceOld(
   source: AnyObject,
   name: string,
   replacement: InterceptorCallback,
-  isForced = false,
+  isForced = false
 ): void {
-  // Source validation
+  // 源对象验证
   if (source === undefined || source === null) {
-    return;
+    return
   }
 
-  // Check if property exists or forced replacement
+  // 检查属性是否存在或强制替换
   if (name in source || isForced) {
-    // Save original function
-    const original = source[name];
+    // 保存原始函数
+    const original = source[name]
 
-    // Create wrapped function
-    const wrapped = replacement(original);
+    // 创建包装函数
+    const wrapped = replacement(original)
 
-    // Replace if result is a valid function
+    // 如果结果是有效函数则替换
     if (typeof wrapped === 'function') {
-      source[name] = wrapped;
+      source[name] = wrapped
     }
   }
 }
 
 /**
- * Restores a previously replaced method to its original implementation.
+ * 将先前替换的方法恢复为原始实现。
  *
- * @param source - The object containing the method
- * @param name - The name of the method to restore
- * @param original - The original function to restore
+ * @param source - 包含方法的对象
+ * @param name - 要恢复的方法名称
+ * @param original - 要恢复的原始函数
  */
-export function restoreMethod(
-  source: AnyObject,
-  name: string,
-  original: any,
-): void {
+export function restoreMethod(source: AnyObject, name: string, original: any): void {
   if (source && name && typeof original === 'function') {
-    source[name] = original;
+    source[name] = original
   }
 }
 
 /**
- * Checks if a method has been replaced/wrapped.
+ * 检查方法是否已被替换/包装。
  *
- * @param source - The object containing the method
- * @param name - The name of the method to check
- * @returns true if the method exists and is a function
+ * @param source - 包含方法的对象
+ * @param name - 要检查的方法名称
+ * @returns 如果方法存在且是函数则返回 true
  */
 export function isMethodReplaced(source: AnyObject, name: string): boolean {
-  return !!(source && name && typeof source[name] === 'function');
+  return !!(source && name && typeof source[name] === 'function')
 }
 
 /**
- * Global tracker for all intercepted methods to allow restoration.
- * Maps: sourceObject_propertyName -> originalFunction
+ * 全局跟踪器，用于所有被拦截的方法以支持恢复。
+ * 映射关系：sourceObject_propertyName -> originalFunction
  */
-const interceptRegistry = new WeakMap<AnyObject, Map<string, any>>();
+const interceptRegistry = new WeakMap<AnyObject, Map<string, any>>()
 
 /**
- * Replace a method and register it for potential restoration.
+ * 替换方法并注册以便后续恢复。
  *
- * @param source - The object containing the method
- * @param name - The name of the method
- * @param replacement - The wrapping callback
- * @param isForced - Force replacement
- * @returns A function to restore the original method
+ * @param source - 包含方法的对象
+ * @param name - 方法名称
+ * @param replacement - 包装回调函数
+ * @param isForced - 是否强制替换
+ * @returns 用于恢复原始方法的函数
  */
 export function replaceTrackable(
   source: AnyObject,
   name: string,
   replacement: InterceptorCallback,
-  isForced = false,
+  isForced = false
 ): () => void {
-  // Get or create registry for this source
-  let sourceRegistry = interceptRegistry.get(source);
+  // 获取或创建此源的注册表
+  let sourceRegistry = interceptRegistry.get(source)
   if (!sourceRegistry) {
-    sourceRegistry = new Map();
-    interceptRegistry.set(source, sourceRegistry);
+    sourceRegistry = new Map()
+    interceptRegistry.set(source, sourceRegistry)
   }
 
-  // Save original if not already saved
+  // 如果尚未保存则保存原始函数
   if (!sourceRegistry.has(name)) {
-    sourceRegistry.set(name, source[name]);
+    sourceRegistry.set(name, source[name])
   }
 
-  const original = sourceRegistry.get(name);
+  const original = sourceRegistry.get(name)
 
-  // Perform replacement
-  replaceOld(source, name, replacement, isForced);
+  // 执行替换
+  replaceOld(source, name, replacement, isForced)
 
-  // Return restoration function
+  // 返回恢复函数
   return () => {
-    restoreMethod(source, name, original);
-  };
+    restoreMethod(source, name, original)
+  }
 }

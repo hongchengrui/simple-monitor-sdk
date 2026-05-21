@@ -105,7 +105,7 @@ export function triggerHandlers(type: EventTypes | string, data: any): void {
       () => {
         callback(data)
       },
-      (_error) => {
+      (_error: Error) => {
         // Silent fail - log in debug mode if needed
         // Individual handler errors should not break the entire event system
       }

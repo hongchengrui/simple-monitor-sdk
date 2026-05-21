@@ -1,19 +1,15 @@
-import { defineConfig } from 'tsup';
+import { defineConfig } from 'tsup'
 
 export default defineConfig({
   entry: {
     index: 'src/index.ts',
   },
   format: ['esm'],
-  dts: {
-    entry: {
-      index: 'src/index.ts',
-    },
-  },
+  dts: false,
   clean: true,
   sourcemap: true,
   target: 'es2020',
   splitting: false,
-  // Don't externalize workspace deps - bundle them in
-  noExternal: ['@simple-monitor/types', '@simple-monitor/utils'],
-});
+  noExternal: ['@simple-monitor/types'],
+  tsconfig: './tsconfig.json',
+})

@@ -1,23 +1,20 @@
-import { defineConfig } from 'tsup';
+import { defineConfig } from 'tsup'
 
 export default defineConfig({
   entry: {
     index: 'src/index.ts',
   },
   format: ['esm'],
-  dts: {
-    entry: {
-      index: 'src/index.ts',
-    },
-  },
+  dts: true,
   clean: true,
   sourcemap: true,
   target: 'es2020',
   splitting: false,
+  tsconfig: './tsconfig.json',
   esbuildOptions(options) {
     options.banner = {
       js: '// @simple-monitor/utils',
-    };
+    }
   },
   treeshake: true,
-});
+})
