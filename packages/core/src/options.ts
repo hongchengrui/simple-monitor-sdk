@@ -1,86 +1,126 @@
-/**
- * Options Management Module
- *
- * Manages SDK initialization configuration using closure pattern.
- * This module serves as the configuration center for the entire SDK.
- *
- * @module options
- */
+import { InitOptions } from '@simple-monitor/types'
+import { generateUUID, toStringValidateOption, validateOption, logger } from '@simple-monitor/utils'
+import { _support, setSilentFlag } from './global'
+import { breadcrumb } from './breadcrumb'
+import { transportData } from './transportData'
 
-import type { InitOptions } from '@simple-monitor/types'
-import { DEFAULT_OPTIONS } from '@simple-monitor/shared'
+export class Options {
+  beforeAppAjaxSend: InitOptions['beforeAppAjaxSend'] = () => {}
+  enableTraceId: InitOptions['enableTraceId']
+  filterXhrUrlRegExp: InitOptions['filterXhrUrlRegExp']
+  includeHttpUrlTraceIdRegExp: InitOptions['includeHttpUrlTraceIdRegExp']
+  traceIdFieldName: InitOptions['traceIdFieldName'] = 'Trace-Id'
+  throttleDelayTime: InitOptions['throttleDelayTime'] = 0
+  maxDuplicateCount: InitOptions['maxDuplicateCount'] = 2
+  // wx-mini
+  appOnLaunch: InitOptions['appOnLaunch'] = () => {}
+  appOnShow: InitOptions['appOnShow'] = () => {}
+  onPageNotFound: InitOptions['onPageNotFound'] = () => {}
+  appOnHide: InitOptions['appOnHide'] = () => {}
+  pageOnUnload: InitOptions['pageOnUnload'] = () => {}
+  pageOnShow: InitOptions['pageOnShow'] = () => {}
+  pageOnHide: InitOptions['pageOnHide'] = () => {}
+  onShareAppMessage: InitOptions['onShareAppMessage'] = () => {}
+  onShareTimeline: InitOptions['onShareTimeline'] = () => {}
+  onTabItemTap: InitOptions['onTabItemTap'] = () => {}
+  // need return opitons，so defaul value is undefined
+  wxNavigateToMiniProgram: InitOptions['wxNavigateToMiniProgram']
+  triggerWxEvent: InitOptions['triggerWxEvent'] = () => {}
+  onRouteChange?: InitOptions['onRouteChange']
 
-/**
- * Internal configuration storage
- * Stores the merged configuration (user options + defaults)
- */
-let _options: InitOptions
-
-/**
- * Initialization flag
- * Tracks whether the SDK has been initialized
- */
-let _isInitialized = false
-
-/**
- * Initialize SDK options
- * Merges user configuration with default values
- *
- * @param opts - User provided configuration options
- * @throws {Error} If dsn is not provided
- */
-export function initOptions(opts: InitOptions): void {
-  // Validate required fields
-  if (!opts.dsn) {
-    throw new Error('[Simple Monitor] dsn is required for initialization')
+  constructor() {
+    this.enableTraceId = false
+    this.filterXhrUrlRegExp = undefined
+    this.includeHttpUrlTraceIdRegExp = undefined
   }
+  bindOptions(options: InitOptions = {}): void {
+    const {
+      beforeAppAjaxSend,
+      enableTraceId,
+      filterXhrUrlRegExp,
+      traceIdFieldName,
+      throttleDelayTime,
+      includeHttpUrlTraceIdRegExp,
+      appOnLaunch,
+      appOnShow,
+      appOnHide,
+      pageOnUnload,
+      pageOnShow,
+      pageOnHide,
+      onPageNotFound,
+      onShareAppMessage,
+      onShareTimeline,
+      onTabItemTap,
+      wxNavigateToMiniProgram,
+      triggerWxEvent,
+      maxDuplicateCount,
+      onRouteChange,
+    } = options
+    validateOption(beforeAppAjaxSend, 'beforeAppAjaxSend', 'function') &&
+      (this.beforeAppAjaxSend = beforeAppAjaxSend)
+    // wx-mini hooks
+    validateOption(appOnLaunch, 'appOnLaunch', 'function') && (this.appOnLaunch = appOnLaunch)
+    validateOption(appOnShow, 'appOnShow', 'function') && (this.appOnShow = appOnShow)
+    validateOption(appOnHide, 'appOnHide', 'function') && (this.appOnHide = appOnHide)
+    validateOption(pageOnUnload, 'pageOnUnload', 'function') && (this.pageOnUnload = pageOnUnload)
+    validateOption(pageOnShow, 'pageOnShow', 'function') && (this.pageOnShow = pageOnShow)
+    validateOption(pageOnHide, 'pageOnHide', 'function') && (this.pageOnHide = pageOnHide)
+    validateOption(onPageNotFound, 'onPageNotFound', 'function') &&
+      (this.onPageNotFound = onPageNotFound)
+    validateOption(onShareAppMessage, 'onShareAppMessage', 'function') &&
+      (this.onShareAppMessage = onShareAppMessage)
+    validateOption(onShareTimeline, 'onShareTimeline', 'function') &&
+      (this.onShareTimeline = onShareTimeline)
+    validateOption(onTabItemTap, 'onTabItemTap', 'function') && (this.onTabItemTap = onTabItemTap)
+    validateOption(wxNavigateToMiniProgram, 'wxNavigateToMiniProgram', 'function') &&
+      (this.wxNavigateToMiniProgram = wxNavigateToMiniProgram)
+    validateOption(triggerWxEvent, 'triggerWxEvent', 'function') &&
+      (this.triggerWxEvent = triggerWxEvent)
+    // browser hooks
+    validateOption(onRouteChange, 'onRouteChange', 'function') &&
+      (this.onRouteChange = onRouteChange)
 
-  // Deep merge with default values
-  // Use spread operator for shallow merge (sufficient for flat config)
-  _options = {
-    ...DEFAULT_OPTIONS,
-    ...opts,
+    validateOption(enableTraceId, 'enableTraceId', 'boolean') &&
+      (this.enableTraceId = enableTraceId)
+    validateOption(traceIdFieldName, 'traceIdFieldName', 'string') &&
+      (this.traceIdFieldName = traceIdFieldName)
+    validateOption(throttleDelayTime, 'throttleDelayTime', 'number') &&
+      (this.throttleDelayTime = throttleDelayTime)
+    validateOption(maxDuplicateCount, 'maxDuplicateCount', 'number') &&
+      (this.maxDuplicateCount = maxDuplicateCount)
+    toStringValidateOption(filterXhrUrlRegExp, 'filterXhrUrlRegExp', '[object RegExp]') &&
+      (this.filterXhrUrlRegExp = filterXhrUrlRegExp)
+    toStringValidateOption(
+      includeHttpUrlTraceIdRegExp,
+      'includeHttpUrlTraceIdRegExp',
+      '[object RegExp]'
+    ) && (this.includeHttpUrlTraceIdRegExp = includeHttpUrlTraceIdRegExp)
   }
+}
 
-  // Mark as initialized
-  _isInitialized = true
+const options = _support.options || (_support.options = new Options())
+
+export function setTraceId(
+  httpUrl: string,
+  callback: (headerFieldName: string, traceId: string) => void
+) {
+  const { includeHttpUrlTraceIdRegExp, enableTraceId } = options
+  if (enableTraceId && includeHttpUrlTraceIdRegExp && includeHttpUrlTraceIdRegExp.test(httpUrl)) {
+    const traceId = generateUUID()
+    callback(options.traceIdFieldName, traceId)
+  }
 }
 
 /**
- * Get all configuration options
- * Returns a copy to prevent external modification
- *
- * @returns Complete configuration object
- * @throws {Error} If SDK is not initialized
+ * init core methods
+ * @param paramOptions
  */
-export function getOptions(): InitOptions {
-  if (!_isInitialized) {
-    throw new Error('[Simple Monitor] SDK is not initialized. Call initOptions() first.')
-  }
-
-  // Return a copy to prevent external modification
-  return { ..._options }
+export function initOptions(paramOptions: InitOptions = {}) {
+  setSilentFlag(paramOptions)
+  breadcrumb.bindOptions(paramOptions)
+  logger.bindOptions(paramOptions.debug)
+  transportData.bindOptions(paramOptions)
+  options.bindOptions(paramOptions)
 }
 
-/**
- * Get a single configuration option by key
- * Provides type-safe access to individual options
- *
- * @template K - Type of the option key
- * @param key - The configuration key to retrieve
- * @returns The value associated with the key
- * @throws {Error} If SDK is not initialized
- *
- * @example
- * ```typescript
- * const dsn = getOption('dsn');  // string
- * const maxBreadcrumbs = getOption('maxBreadcrumbs');  // number
- * ```
- */
-export function getOption<K extends keyof InitOptions>(key: K): InitOptions[K] {
-  if (!_isInitialized) {
-    throw new Error('[Simple Monitor] SDK is not initialized. Call initOptions() first.')
-  }
-
-  return _options[key]
-}
+export { options }

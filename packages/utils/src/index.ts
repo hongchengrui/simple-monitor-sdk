@@ -39,3 +39,6 @@ export * from './functional'
 
 // Helper Functions (DOM & Platform specific)
 export * from './helpers'
+
+// Parser Utilities
+export * from './parser'

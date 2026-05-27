@@ -1,40 +1,41 @@
-import { getAppId, isWxMiniEnv, variableTypeDetection } from 'encode-monitor-utils'
-import { ErrorTypes, EventTypes } from 'encode-monitor-shared'
-import { ReportDataType } from 'encode-monitor-types'
+import { getAppId, isWxMiniEnv, variableTypeDetection } from '@simple-monitor/utils'
+import { ErrorTypes, EventTypes, ReportDataType } from '@simple-monitor/types'
 import { options } from './options'
-const allErrorNumber: unknown = {}
+const allErrorNumber: Record<number, number> = {}
 /**
  * generate error unique Id
  * @param data
  */
 export function createErrorId(data: ReportDataType, apikey: string): number | null {
-  let id: any
-  switch (data.type) {
+  let idStr: string
+  const errorType = data.type ?? ErrorTypes.UNKNOWN
+  switch (errorType) {
     case ErrorTypes.FETCH_ERROR:
-      id =
-        data.type +
-        data.request.method +
-        data.response.status +
-        getRealPath(data.request.url) +
+      idStr =
+        (data.type ?? '') +
+        (data.request?.method ?? '') +
+        (data.response?.status ?? '') +
+        getRealPath(data.request?.url ?? '') +
         apikey
       break
     case ErrorTypes.JAVASCRIPT_ERROR:
     case ErrorTypes.VUE_ERROR:
     case ErrorTypes.REACT_ERROR:
-      id = data.type + data.name + data.message + apikey
+      idStr = (data.type ?? '') + (data.name ?? '') + (data.message ?? '') + apikey
       break
     case ErrorTypes.LOG_ERROR:
-      id = data.customTag + data.type + data.name + apikey
+      idStr = (data.customTag ?? '') + (data.type ?? '') + (data.name ?? '') + apikey
       break
     case ErrorTypes.PROMISE_ERROR:
-      id = generatePromiseErrorId(data, apikey)
+      idStr = generatePromiseErrorId(data, apikey)
       break
     default:
-      id = data.type + data.message + apikey
+      idStr = (data.type ?? '') + (data.message ?? '') + apikey
       break
   }
-  id = hashCode(id)
-  if (allErrorNumber[id] >= options.maxDuplicateCount) {
+  const id = hashCode(idStr)
+  const maxDuplicateCount = options().maxDuplicateCount ?? 10
+  if (allErrorNumber[id] >= maxDuplicateCount) {
     return null
   }
   if (typeof allErrorNumber[id] === 'number') {
@@ -46,26 +47,29 @@ export function createErrorId(data: ReportDataType, apikey: string): number | nu
   return id
 }
 
-function generatePromiseErrorId(data: ReportDataType, apikey: string) {
-  const locationUrl = getRealPath(data.url)
+function generatePromiseErrorId(data: ReportDataType, apikey: string): string {
+  const locationUrl = getRealPath(data.url ?? '')
   if (data.name === EventTypes.UNHANDLEDREJECTION) {
-    return data.type + objectOrder(data.message) + apikey
+    return (data.type ?? '') + objectOrder(data.message) + apikey
   }
-  return data.type + data.name + objectOrder(data.message) + locationUrl
+  return (data.type ?? '') + (data.name ?? '') + objectOrder(data.message) + locationUrl
 }
 
-function objectOrder(reason: any) {
-  const sortFn = (obj: any) => {
+function objectOrder(reason: any): string {
+  const sortFn = (obj: any): any => {
     return Object.keys(obj)
       .sort()
-      .reduce((total, key) => {
-        if (variableTypeDetection.isObject(obj[key])) {
-          total[key] = sortFn(obj[key])
-        } else {
-          total[key] = obj[key]
-        }
-        return total
-      }, {})
+      .reduce(
+        (total: Record<string, any>, key: string) => {
+          if (variableTypeDetection.isObject(obj[key])) {
+            total[key] = sortFn(obj[key])
+          } else {
+            total[key] = obj[key]
+          }
+          return total
+        },
+        {} as Record<string, any>
+      )
   }
   try {
     if (/\{.*\}/.test(reason)) {
@@ -74,8 +78,9 @@ function objectOrder(reason: any) {
       return JSON.stringify(obj)
     }
   } catch (error) {
-    return reason
+    return String(reason)
   }
+  return String(reason)
 }
 
 /**
@@ -85,7 +90,7 @@ function objectOrder(reason: any) {
  * @param url
  */
 export function getRealPath(url: string): string {
-  return url.replace(/[\?#].*$/, '').replace(/\/\d+([\/]*$)/, '{param}$1')
+  return url.replace(/[?#].*$/, '').replace(/\/\d+([/]*$)/, '{param}$1')
 }
 
 /**

@@ -4,7 +4,7 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "lib": ["ES2020", "DOM"],
-    "composite": true
+    "composite": false
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts"],
   "exclude": ["node_modules", "dist", "**/*.test.ts"]

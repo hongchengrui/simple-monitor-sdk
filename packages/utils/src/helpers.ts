@@ -3,6 +3,7 @@ import { variableTypeDetection } from './is'
 import { setUrlQuery } from './string'
 
 declare const getCurrentPages: any
+declare const wx: any
 
 // 用到所有事件名称
 type TotalEventName =
@@ -60,6 +61,22 @@ export function getCurrentRoute(): string {
   }
   const currentPage = pages.pop()
   return setUrlQuery(currentPage.route, currentPage.options)
+}
+
+/**
+ * 获取微信小程序 AppId
+ * @returns 小程序 AppId 或空字符串
+ */
+export function getAppId(): string {
+  if (typeof wx !== 'undefined' && wx.getAccountInfoSync) {
+    try {
+      const accountInfo = wx.getAccountInfoSync()
+      return accountInfo?.miniProgram?.appId || ''
+    } catch {
+      return ''
+    }
+  }
+  return ''
 }
 
 /**

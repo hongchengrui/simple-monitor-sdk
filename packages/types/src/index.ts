@@ -32,6 +32,9 @@ export * from './replace'
 // Track types
 export * from './track'
 
+// Log types
+export * from './log'
+
 // Transport data types
 export * from './transportData'
 

@@ -3,8 +3,8 @@
  * 包含 SDK 特定的全局状态
  */
 
-import { MonitorSupport } from '@simple-monitor/types'
-import { getGlobal, logger } from '@simple-monitor/utils'
+import { MonitorSupport, EventTypes, WxAppEvents, WxPageEvents, InitOptions } from '@simple-monitor/types'
+import { getGlobal, logger, setFlag } from '@simple-monitor/utils'
 
 /**
  * 获取全局对象
@@ -43,3 +43,27 @@ export function silentConsoleScope<T>(callback: () => T): T {
 
 // 重新导出 utils 中的函数
 export { getGlobal } from '@simple-monitor/utils'
+
+/**
+ * 设置静默标志
+ * 根据用户配置控制各类事件是否静默
+ */
+export function setSilentFlag(paramOptions: InitOptions = {}): void {
+  setFlag(EventTypes.XHR, !!paramOptions.silentXhr)
+  setFlag(EventTypes.FETCH, !!paramOptions.silentFetch)
+  setFlag(EventTypes.CONSOLE, !!paramOptions.silentConsole)
+  setFlag(EventTypes.DOM, !!paramOptions.silentDom)
+  setFlag(EventTypes.HISTORY, !!paramOptions.silentHistory)
+  setFlag(EventTypes.ERROR, !!paramOptions.silentError)
+  setFlag(EventTypes.HASHCHANGE, !!paramOptions.silentHashchange)
+  setFlag(EventTypes.UNHANDLEDREJECTION, !!paramOptions.silentUnhandledrejection)
+  setFlag(EventTypes.VUE, !!paramOptions.silentVue)
+  // wx App
+  setFlag(WxAppEvents.AppOnError, !!paramOptions.silentWxOnError)
+  setFlag(WxAppEvents.AppOnUnhandledRejection, !!paramOptions.silentUnhandledrejection)
+  setFlag(WxAppEvents.AppOnPageNotFound, !!paramOptions.silentWxOnPageNotFound)
+  // wx Page
+  setFlag(WxPageEvents.PageOnShareAppMessage, !!paramOptions.silentWxOnShareAppMessage)
+  // mini Route
+  setFlag(EventTypes.MINI_ROUTE, !!paramOptions.silentMiniRoute)
+}

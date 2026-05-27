@@ -5,15 +5,8 @@ import {
   InitOptions,
   IBreadcrumb,
 } from '@simple-monitor/types'
-import {
-  logger,
-  validateOption,
-  getTimestamp,
-} from '@simple-monitor/utils'
-import {
-  silentConsoleScope,
-  _support,
-} from './global'
+import { validateOption, getTimestamp } from '@simple-monitor/utils'
+import { silentConsoleScope, _support } from './global'
 
 export class Breadcrumb implements IBreadcrumb {
   maxBreadcrumbs = 10
@@ -23,7 +16,7 @@ export class Breadcrumb implements IBreadcrumb {
 
   push(data: BreadcrumbPushData): void {
     if (typeof this.beforePushBreadcrumb === 'function') {
-      let result: BreadcrumbPushData = null
+      let result: BreadcrumbPushData | null = null
       const beforePushBreadcrumb = this.beforePushBreadcrumb
       silentConsoleScope(() => {
         result = beforePushBreadcrumb(this, data)
@@ -35,13 +28,12 @@ export class Breadcrumb implements IBreadcrumb {
     this.immediatePush(data)
   }
   immediatePush(data: BreadcrumbPushData): void {
-    data.time || (data.time = getTimestamp())
+    data.time ??= getTimestamp()
     if (this.stack.length >= this.maxBreadcrumbs) {
       this.shift()
     }
     this.stack.push(data)
-    this.stack.sort((a, b) => a.time - b.time)
-    logger.log(this.stack)
+    this.stack.sort((a, b) => (a.time || 0) - (b.time || 0))
   }
   shift(): boolean {
     return this.stack.shift() !== undefined
@@ -85,10 +77,12 @@ export class Breadcrumb implements IBreadcrumb {
   }
   bindOptions(options: InitOptions = {}): void {
     const { maxBreadcrumbs, beforePushBreadcrumb } = options
-    validateOption(maxBreadcrumbs, 'maxBreadcrumbs', 'number') &&
-      (this.maxBreadcrumbs = maxBreadcrumbs)
-    validateOption(beforePushBreadcrumb, 'beforePushBreadcrumb', 'function') &&
-      (this.beforePushBreadcrumb = beforePushBreadcrumb)
+    if (validateOption(maxBreadcrumbs, 'maxBreadcrumbs', 'number')) {
+      this.maxBreadcrumbs = maxBreadcrumbs!
+    }
+    if (validateOption(beforePushBreadcrumb, 'beforePushBreadcrumb', 'function')) {
+      this.beforePushBreadcrumb = beforePushBreadcrumb
+    }
   }
 }
 const breadcrumb = _support.breadcrumb || (_support.breadcrumb = new Breadcrumb())

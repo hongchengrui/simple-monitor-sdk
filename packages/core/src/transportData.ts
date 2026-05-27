@@ -1,110 +1,152 @@
-import { _support } from './global'
-import {
-  validateOption,
-  logger,
-  variableTypeDetection,
-  Queue,
-  isEmpty,
-  isBrowserEnv,
-  isWxMiniEnv,
-} from '@simple-monitor/utils'
-import { createErrorId } from './errorId'
-import { SDK_NAME, SDK_VERSION } from '@simple-monitor/shared'
-import { breadcrumb } from './breadcrumb'
-import {
-  AuthInfo,
-  TransportDataType,
-  EMethods,
-  InitOptions,
-  isReportDataType,
-  DeviceInfo,
-  FinalReportType,
-  ITransportData,
-} from '@simple-monitor/types'
+/**
+ * 数据上报模块
+ * 负责将转换后的数据组装成完整的上报 payload，并通过多种方式发送到服务端
+ */
 
+import type {
+  TransportDataType,
+  FinalReportType,
+  AuthInfo,
+  InitOptions,
+  ITransportData,
+  DeviceInfo,
+} from '@simple-monitor/types'
+import { isReportDataType } from '@simple-monitor/types'
+import {
+  Queue,
+  generateUUID,
+  isWxMiniEnv,
+  isBrowserEnv,
+  logger,
+  getGlobal,
+  validateOption,
+  isEmpty,
+  variableTypeDetection,
+} from '@simple-monitor/utils'
+import { breadcrumb } from './breadcrumb'
+import { createErrorId } from './errorId'
+import { _support } from './global'
+
+const SDK_VERSION = '1.0.0'
+const SDK_NAME = 'simple-monitor-sdk'
+
+// 获取全局对象
+const _global = getGlobal<any>()
+
+/**
+ * 获取默认 TrackerId（内部方法）
+ * 从 localStorage 读取或生成 UUID，作为 getTrackerId 的后备默认实现
+ */
+function getDefaultTrackerId(): string {
+  const storage = _global.localStorage
+  if (!storage) return generateUUID()
+
+  const trackerId = storage.getItem('simple-monitor-tracker-id')
+  if (trackerId) return trackerId
+  const newTrackerId = generateUUID()
+  storage.setItem('simple-monitor-tracker-id', newTrackerId)
+  return newTrackerId
+}
+
+/**
+ * 数据上报类
+ */
 export class TransportData implements ITransportData {
   queue: Queue
-  beforeDataReport: unknown = null
-  backTrackerId: unknown = null
-  configReportXhr: unknown = null
-  configReportUrl: unknown = null
-  configReportWxRequest: unknown = null
-  useImgUpload = false
-  apikey = ''
-  trackKey = ''
-  errorDsn = ''
-  trackDsn = ''
+  beforeDataReport: InitOptions['beforeDataReport']
+  backTrackerId: InitOptions['backTrackerId']
+  configReportXhr: InitOptions['configReportXhr']
+  configReportUrl: InitOptions['configReportUrl']
+  configReportWxRequest: InitOptions['configReportWxRequest']
+  useImgUpload: boolean
+  apikey: string
+  trackKey: string
+  errorDsn: string
+  trackDsn: string
+
   constructor() {
     this.queue = new Queue()
+    this.beforeDataReport = undefined
+    this.backTrackerId = undefined
+    this.configReportXhr = undefined
+    this.configReportUrl = undefined
+    this.configReportWxRequest = undefined
+    this.useImgUpload = false
+    this.apikey = ''
+    this.trackKey = ''
+    this.errorDsn = ''
+    this.trackDsn = ''
   }
 
-  imgRequest(data: any, url: string): void {
-    const requestFun = () => {
-      let img = new Image()
-      const spliceStr = url.indexOf('?') === -1 ? '?' : '&'
-      img.src = `${url}${spliceStr}data=${encodeURIComponent(JSON.stringify(data))}`
-      img = null
-    }
-    this.queue.addFn(requestFun)
+  /**
+   * 绑定配置项（使用 validateOption 验证）
+   */
+  bindOptions(options: InitOptions = {}): void {
+    const {
+      dsn,
+      trackDsn,
+      apikey,
+      trackKey,
+      useImgUpload,
+      beforeDataReport,
+      configReportXhr,
+      configReportUrl,
+      configReportWxRequest,
+      backTrackerId,
+    } = options
+
+    if (validateOption(dsn, 'dsn', 'string')) this.errorDsn = dsn ?? ''
+    if (validateOption(trackDsn, 'trackDsn', 'string')) this.trackDsn = trackDsn ?? ''
+    if (validateOption(apikey, 'apikey', 'string')) this.apikey = apikey ?? ''
+    if (validateOption(trackKey, 'trackKey', 'string')) this.trackKey = trackKey ?? ''
+    if (validateOption(useImgUpload, 'useImgUpload', 'boolean'))
+      this.useImgUpload = useImgUpload ?? false
+    if (validateOption(beforeDataReport, 'beforeDataReport', 'function'))
+      this.beforeDataReport = beforeDataReport
+    if (validateOption(configReportXhr, 'configReportXhr', 'function'))
+      this.configReportXhr = configReportXhr
+    if (validateOption(configReportUrl, 'configReportUrl', 'function'))
+      this.configReportUrl = configReportUrl
+    if (validateOption(configReportWxRequest, 'configReportWxRequest', 'function'))
+      this.configReportWxRequest = configReportWxRequest
+    if (validateOption(backTrackerId, 'backTrackerId', 'function'))
+      this.backTrackerId = backTrackerId
   }
 
-  getRecord(): any[] {
-    const recordData = _support.record
-    if (recordData && variableTypeDetection.isArray(recordData) && recordData.length > 2) {
-      return recordData
-    }
-    return []
-  }
-
-  getDeviceInfo(): DeviceInfo | any {
-    return _support.deviceInfo || {}
-  }
-
-  async beforePost(data: FinalReportType) {
-    if (isReportDataType(data)) {
-      const errorId = createErrorId(data, this.apikey)
-      if (!errorId) return false
-      data.errorId = errorId
-    }
-    let transportData = this.getTransportData(data)
-    if (typeof this.beforeDataReport === 'function') {
-      transportData = await this.beforeDataReport(transportData)
-      if (!transportData) return false
-    }
-    return transportData
-  }
-
-  async xhrPost(data: any, url: string) {
-    const requestFun = (): void => {
-      const xhr = new XMLHttpRequest()
-      xhr.open(EMethods.Post, url)
-      xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')
-      xhr.withCredentials = true
-      if (typeof this.configReportXhr === 'function') {
-        this.configReportXhr(xhr, data)
+  /**
+   * 获取 TrackerId
+   * 优先使用用户自定义的 backTrackerId，否则使用默认实现（从 localStorage 读取或生成 UUID）
+   */
+  getTrackerId(): string | number {
+    if (typeof this.backTrackerId === 'function') {
+      const trackerId = this.backTrackerId()
+      if (typeof trackerId === 'string' || typeof trackerId === 'number') {
+        return trackerId
       }
-      xhr.send(JSON.stringify(data))
+      logger.error(
+        `trackerId:${trackerId} 期望 string 或 number 类型，但是传入类型为 ${typeof trackerId}`
+      )
     }
-    this.queue.addFn(requestFun)
+    return getDefaultTrackerId()
   }
 
-  async wxPost(data: any, url: string) {
-    const requestFun = (): void => {
-      let requestOptions = { method: 'POST' } as WechatMiniprogram.RequestOption
-      if (typeof this.configReportWxRequest === 'function') {
-        const params = this.configReportWxRequest(data)
-        requestOptions = { ...requestOptions, ...params }
-      }
-      requestOptions = {
-        ...requestOptions,
-        data: JSON.stringify(data),
-        url,
-      }
-      wx.request(requestOptions)
-    }
-    this.queue.addFn(requestFun)
+  /**
+   * 获取 apikey
+   */
+  getApikey(): string {
+    return this.apikey
   }
 
+  /**
+   * 获取 trackKey
+   */
+  getTrackKey(): string {
+    return this.trackKey
+  }
+
+  /**
+   * 获取认证信息
+   */
   getAuthInfo(): AuthInfo {
     const trackerId = this.getTrackerId()
     const result: AuthInfo = {
@@ -117,28 +159,27 @@ export class TransportData implements ITransportData {
     return result
   }
 
-  getApikey() {
-    return this.apikey
-  }
-
-  getTrackKey() {
-    return this.trackKey
-  }
-
-  getTrackerId(): string | number {
-    if (typeof this.backTrackerId === 'function') {
-      const trackerId = this.backTrackerId()
-      if (typeof trackerId === 'string' || typeof trackerId === 'number') {
-        return trackerId
-      } else {
-        logger.error(
-          `trackerId:${trackerId} 期望 string 或 number 类型，但是传入类型为 ${typeof trackerId}`
-        )
-      }
+  /**
+   * 获取录屏数据
+   */
+  getRecord(): any[] {
+    const recordData = _support.record
+    if (recordData && variableTypeDetection.isArray(recordData) && recordData.length > 2) {
+      return recordData
     }
-    return ''
+    return []
   }
 
+  /**
+   * 获取设备信息（优先从 _support 获取）
+   */
+  getDeviceInfo(): DeviceInfo | any {
+    return _support.deviceInfo || {}
+  }
+
+  /**
+   * 组装完整的上报数据
+   */
   getTransportData(data: FinalReportType): TransportDataType {
     return {
       authInfo: this.getAuthInfo(),
@@ -149,7 +190,12 @@ export class TransportData implements ITransportData {
     }
   }
 
+  /**
+   * 判断目标 URL 是否为 SDK 的上报地址
+   * 使用 indexOf 支持子路径匹配
+   */
   isSdkTransportUrl(targetUrl: string): boolean {
+    if (!targetUrl) return false
     let isSdkDsn = false
     if (this.errorDsn && targetUrl.indexOf(this.errorDsn) !== -1) {
       isSdkDsn = true
@@ -160,43 +206,136 @@ export class TransportData implements ITransportData {
     return isSdkDsn
   }
 
-  bindOptions(options: InitOptions = {}): void {
-    const {
-      dsn,
-      beforeDataReport,
-      apikey,
-      configReportXhr,
-      backTrackerId,
-      trackDsn,
-      trackKey,
-      configReportUrl,
-      useImgUpload,
-      configReportWxRequest,
-    } = options
-    validateOption(apikey, 'apikey', 'string') && (this.apikey = apikey)
-    validateOption(trackKey, 'trackKey', 'string') && (this.trackKey = trackKey)
-    validateOption(dsn, 'dsn', 'string') && (this.errorDsn = dsn)
-    validateOption(trackDsn, 'trackDsn', 'string') && (this.trackDsn = trackDsn)
-    validateOption(useImgUpload, 'useImgUpload', 'boolean') && (this.useImgUpload = useImgUpload)
-    validateOption(beforeDataReport, 'beforeDataReport', 'function') &&
-      (this.beforeDataReport = beforeDataReport)
-    validateOption(configReportXhr, 'configReportXhr', 'function') &&
-      (this.configReportXhr = configReportXhr)
-    validateOption(backTrackerId, 'backTrackerId', 'function') &&
-      (this.backTrackerId = backTrackerId)
-    validateOption(configReportUrl, 'configReportUrl', 'function') &&
-      (this.configReportUrl = configReportUrl)
-    validateOption(configReportWxRequest, 'configReportWxRequest', 'function') &&
-      (this.configReportWxRequest = configReportWxRequest)
+  /**
+   * 上报前数据处理
+   * 生成 errorId 并执行钩子
+   */
+  async beforePost(data: FinalReportType): Promise<TransportDataType | false> {
+    // 如果是错误数据，生成 errorId
+    if (isReportDataType(data) && this.apikey) {
+      const errorId = createErrorId(data, this.apikey)
+      if (errorId === null) {
+        // 重复错误超过阈值，不上报
+        return false
+      }
+      data.errorId = errorId
+    }
+
+    let transportData = this.getTransportData(data)
+
+    // 执行 beforeDataReport 钩子
+    if (typeof this.beforeDataReport === 'function') {
+      try {
+        const result = await Promise.resolve(this.beforeDataReport(transportData))
+        if (!result) return false
+        transportData = result as TransportDataType
+      } catch (error) {
+        logger.error('beforeDataReport hook error:', error)
+        return false
+      }
+    }
+
+    return transportData
   }
 
   /**
-   * 监控错误上报的请求函数
-   * @param data 错误上报数据格式
-   * @returns
+   * 使用 XHR 上报数据（队列模式）
    */
-  async send(data: FinalReportType) {
+  xhrPost(data: TransportDataType, url: string): void {
+    const requestFun = (): void => {
+      const XHRConstructor = _global.XMLHttpRequest
+      if (!XHRConstructor) {
+        logger.error('XMLHttpRequest is not supported')
+        return
+      }
+
+      const xhr = new XHRConstructor()
+      xhr.open('POST', url, true)
+      xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')
+      xhr.withCredentials = true
+
+      // 执行 configReportXhr 钩子
+      if (typeof this.configReportXhr === 'function') {
+        try {
+          this.configReportXhr(xhr, data)
+        } catch (error) {
+          logger.error('configReportXhr hook error:', error)
+        }
+      }
+
+      try {
+        xhr.send(JSON.stringify(data))
+      } catch (error) {
+        logger.error('XHR send error:', error)
+      }
+    }
+    this.queue.addFn(requestFun)
+  }
+
+  /**
+   * 使用 Image 方式上报数据（智能 URL 拼接）
+   */
+  imgRequest(data: TransportDataType, url: string): void {
+    const requestFun = (): void => {
+      const ImgConstructor = _global.Image
+      if (!ImgConstructor) {
+        logger.error('Image is not supported')
+        return
+      }
+
+      try {
+        const img = new ImgConstructor()
+        const spliceStr = url.indexOf('?') === -1 ? '?' : '&'
+        img.src = `${url}${spliceStr}data=${encodeURIComponent(JSON.stringify(data))}`
+      } catch (error) {
+        logger.error('imgRequest error:', error)
+      }
+    }
+    this.queue.addFn(requestFun)
+  }
+
+  /**
+   * 使用微信小程序 wx.request 上报数据（队列模式）
+   */
+  wxPost(data: TransportDataType, url: string): void {
+    const requestFun = (): void => {
+      const wx = _global.wx
+      if (!wx || !wx.request) {
+        logger.error('wx.request is not available')
+        return
+      }
+
+      let requestOptions: any = {
+        method: 'POST',
+        data,
+        url,
+      }
+
+      // 执行 configReportWxRequest 钩子
+      if (typeof this.configReportWxRequest === 'function') {
+        try {
+          const params = this.configReportWxRequest(data)
+          if (params) {
+            requestOptions = { ...requestOptions, ...params }
+          }
+        } catch (error) {
+          logger.error('configReportWxRequest hook error:', error)
+        }
+      }
+
+      wx.request(requestOptions)
+    }
+    this.queue.addFn(requestFun)
+  }
+
+  /**
+   * 核心发送方法
+   * 根据环境和配置选择上报方式
+   */
+  async send(data: FinalReportType): Promise<void> {
     let dsn = ''
+
+    // 判断数据类型并选择对应的 DSN
     if (isReportDataType(data)) {
       dsn = this.errorDsn
       if (isEmpty(dsn)) {
@@ -210,13 +349,24 @@ export class TransportData implements ITransportData {
         return
       }
     }
+
+    // 执行 beforePost 处理
     const result = await this.beforePost(data)
     if (!result) return
+
+    // 执行 configReportUrl 钩子
     if (typeof this.configReportUrl === 'function') {
-      dsn = this.configReportUrl(result, dsn)
-      if (!dsn) return
+      try {
+        const customUrl = this.configReportUrl(result, dsn)
+        if (!customUrl) return
+        dsn = customUrl
+      } catch (error) {
+        logger.error('configReportUrl hook error:', error)
+        return
+      }
     }
 
+    // 根据环境选择上报方式
     if (isBrowserEnv) {
       return this.useImgUpload ? this.imgRequest(result, dsn) : this.xhrPost(result, dsn)
     }

@@ -1,8 +1,7 @@
-import { EventTypes, ErrorTypes, WxAppEvents, WxPageEvents } from '@simple-monitor/types'
+import { ErrorTypes } from '@simple-monitor/types'
 import { getLocationHref } from './helpers'
 import { getTimestamp } from './time'
-import { setFlag } from './global'
-import { ReportDataType, InitOptions, Severity } from '@simple-monitor/types'
+import { ReportDataType, Severity } from '@simple-monitor/types'
 
 /**
  * 返回包含id、class、innerTextde字符串的标签
@@ -48,26 +47,6 @@ export function parseUrlToObj(url: string): {
     protocol: match[2] || undefined,
     relative: (match[5] || '') + query + fragment,
   }
-}
-
-export function setSilentFlag(paramOptions: InitOptions = {}): void {
-  setFlag(EventTypes.XHR, !!paramOptions.silentXhr)
-  setFlag(EventTypes.FETCH, !!paramOptions.silentFetch)
-  setFlag(EventTypes.CONSOLE, !!paramOptions.silentConsole)
-  setFlag(EventTypes.DOM, !!paramOptions.silentDom)
-  setFlag(EventTypes.HISTORY, !!paramOptions.silentHistory)
-  setFlag(EventTypes.ERROR, !!paramOptions.silentError)
-  setFlag(EventTypes.HASHCHANGE, !!paramOptions.silentHashchange)
-  setFlag(EventTypes.UNHANDLEDREJECTION, !!paramOptions.silentUnhandledrejection)
-  setFlag(EventTypes.VUE, !!paramOptions.silentVue)
-  // wx App
-  setFlag(WxAppEvents.AppOnError, !!paramOptions.silentWxOnError)
-  setFlag(WxAppEvents.AppOnUnhandledRejection, !!paramOptions.silentUnhandledrejection)
-  setFlag(WxAppEvents.AppOnPageNotFound, !!paramOptions.silentWxOnPageNotFound)
-  // wx Page
-  setFlag(WxPageEvents.PageOnShareAppMessage, !!paramOptions.silentWxOnShareAppMessage)
-  // mini Route
-  setFlag(EventTypes.MINI_ROUTE, !!paramOptions.silentMiniRoute)
 }
 
 /**

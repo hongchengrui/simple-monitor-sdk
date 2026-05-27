@@ -25,4 +25,5 @@ export interface IBreadcrumb {
   clear(): void
   getStack(): BreadcrumbPushData[]
   bindOptions(options?: any): void
+  getCategory(type: BreadCrumbTypes): string
 }
