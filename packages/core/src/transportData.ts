@@ -26,9 +26,7 @@ import {
 import { breadcrumb } from './breadcrumb'
 import { createErrorId } from './errorId'
 import { _support } from './global'
-
-const SDK_VERSION = '1.0.0'
-const SDK_NAME = 'simple-monitor-sdk'
+import { SDK_VERSION, SDK_NAME } from '@simple-monitor/shared'
 
 // 获取全局对象
 const _global = getGlobal<any>()

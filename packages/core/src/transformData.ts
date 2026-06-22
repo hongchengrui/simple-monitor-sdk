@@ -117,6 +117,8 @@ export function httpTransform(data: MonitorHttp): ReportDataType {
 const resourceMap: Record<string, string> = {
   img: '图片',
   script: 'js脚本',
+  css: '样式',
+  link: '资源',
 }
 
 export function resourceTransform(target: ResourceErrorTarget): ReportDataType {

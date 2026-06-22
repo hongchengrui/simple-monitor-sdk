@@ -145,10 +145,6 @@ export const DEFAULT_ENABLE_AUTO_TRACK = true
 export const DEFAULT_OPTIONS: Partial<InitOptions> = {
   maxBreadcrumbs: DEFAULT_MAX_BREADCRUMBS,
   throttleDelayTime: DEFAULT_THROTTLE_DELAY,
-  useImageUpload: DEFAULT_USE_IMAGE_UPLOAD,
-  enableErrorTracking: DEFAULT_ENABLE_ERROR_TRACKING,
-  enablePerformanceTracking: DEFAULT_ENABLE_PERFORMANCE_TRACKING,
-  enableHttpTracking: DEFAULT_ENABLE_HTTP_TRACKING,
-  silent: DEFAULT_SILENT_MODE,
+  useImgUpload: DEFAULT_USE_IMAGE_UPLOAD,
   debug: DEFAULT_DEBUG_MODE,
 }

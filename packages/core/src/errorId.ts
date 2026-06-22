@@ -34,7 +34,7 @@ export function createErrorId(data: ReportDataType, apikey: string): number | nu
       break
   }
   const id = hashCode(idStr)
-  const maxDuplicateCount = options().maxDuplicateCount ?? 10
+  const maxDuplicateCount = options.maxDuplicateCount ?? 2
   if (allErrorNumber[id] >= maxDuplicateCount) {
     return null
   }
