@@ -1,6 +1,6 @@
 {
   "name": "@simple-monitor/types",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Type definitions for Simple Monitor SDK",
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",

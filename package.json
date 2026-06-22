@@ -1,6 +1,6 @@
 {
   "name": "simple-monitor-sdk",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "private": true,
   "description": "Lightweight cross-platform frontend monitoring SDK",
   "scripts": {
@@ -10,12 +10,12 @@
     "build:utils": "pnpm --filter @simple-monitor/utils run build",
     "build:shared": "pnpm --filter @simple-monitor/shared run build",
     "build:core": "pnpm --filter @simple-monitor/core run build",
-    "build:platforms": "pnpm -r --filter './packages/{browser,react,vue,wx-miniprogram,web-performance,web}' run build",
+    "build:platforms": "pnpm -r --filter './packages/{browser,react,vue,web-performance,web}' run build",
     "clean": "pnpm -r run clean && rm -rf node_modules",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "format": "prettier --write \"**/*.{ts,json,md}\"",
-    "typecheck": "pnpm -r run typecheck",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
     "prepublishOnly": "pnpm build",
     "changeset": "changeset",
     "version": "changeset version",

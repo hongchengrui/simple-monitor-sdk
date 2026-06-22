@@ -1,6 +1,6 @@
 {
   "name": "@simple-monitor/react",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "React platform adapter for Simple Monitor SDK",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

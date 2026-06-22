@@ -1,6 +1,6 @@
 {
   "name": "@simple-monitor/shared",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Shared constants and utilities for Simple Monitor SDK",
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",

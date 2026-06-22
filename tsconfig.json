@@ -1,18 +1,21 @@
 {
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "ESNext",
     "lib": ["ES2020", "DOM"],
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "allowJs": true,
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@simple-monitor/types": ["./packages/types/src"],
+      "@simple-monitor/shared": ["./packages/shared/src"],
+      "@simple-monitor/utils": ["./packages/utils/src"],
+      "@simple-monitor/core": ["./packages/core/src"],
+      "@simple-monitor/browser": ["./packages/browser/src"],
+      "@simple-monitor/vue": ["./packages/vue/src"],
+      "@simple-monitor/react": ["./packages/react/src"],
+      "@simple-monitor/web": ["./packages/web/src"],
+      "@simple-monitor/web-performance": ["./packages/web-performance/src"]
+    }
   },
+  "include": ["packages/*/src/**/*.ts", "packages/*/src/**/*.d.ts"],
   "exclude": ["node_modules", "dist", "**/*.test.ts", "examples"]
 }

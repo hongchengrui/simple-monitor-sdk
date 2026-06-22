@@ -1,6 +1,6 @@
 {
   "name": "@simple-monitor/browser",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Browser platform adapter for Simple Monitor SDK",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
