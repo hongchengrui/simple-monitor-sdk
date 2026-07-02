@@ -21,18 +21,22 @@ export function getLocationHref(): string {
 
 /**
  * 添加事件监听器
- * @param target 目标对象
+ * @param target 目标对象（window / document / 元素等任何具备 addEventListener 的对象）
  * @param eventName 事件名称
  * @param handler 事件处理函数
- * @param options 选项
+ * @param options 选项（useCapture 或 AddEventListenerOptions）
  */
 export function on(
   target: {
-    addEventListener: (event: string, handler: () => void, options?: boolean | unknown) => void
+    addEventListener: (
+      event: string,
+      handler: EventListenerOrEventListenerObject,
+      options?: boolean | AddEventListenerOptions
+    ) => void
   },
   eventName: TotalEventName,
-  handler: () => void,
-  options: boolean | unknown = false
+  handler: EventListenerOrEventListenerObject,
+  options: boolean | AddEventListenerOptions = false
 ): void {
   target.addEventListener(eventName, handler, options)
 }

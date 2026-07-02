@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@simple-monitor/types": "workspace:*",
+    "@simple-monitor/utils": "workspace:*",
     "@simple-monitor/browser": "workspace:*",
     "@simple-monitor/web-performance": "workspace:*"
   },
