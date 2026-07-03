@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { buildResourceStages, buildResourceEntry, pickSlowResources } from './metrics/getResourceTiming'
+import { buildResourceStages, buildResourceEntry, pickSlowResources } from '../../packages/web-performance/src/metrics/getResourceTiming'
 
 /** 构造一个 PerformanceResourceTiming 替身 */
 const mkEntry = (overrides: Partial<PerformanceResourceTiming> = {}): PerformanceResourceTiming =>

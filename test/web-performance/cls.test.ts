@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { createClsAccumulator } from './metrics/getCLS'
-import type { LayoutShift } from './types'
+import { createClsAccumulator } from '../../packages/web-performance/src/metrics/getCLS'
+import type { LayoutShift } from '../../packages/web-performance/src/types'
 
 /** 构造一条 layout-shift entry 的最小替身（startTime/value/hadRecentInput） */
 const shift = (startTime: number, value: number, hadRecentInput = false): LayoutShift =>

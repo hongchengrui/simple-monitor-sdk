@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { normalizeResource } from './lib/proxyHandler'
+import { normalizeResource } from '../../packages/web-performance/src/lib/proxyHandler'
 
 describe('normalizeResource（fetch resource 归一化）', () => {
   it('string 透传', () => {

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
-import createReporter from './lib/createReporter'
+import createReporter from '../../packages/web-performance/src/lib/createReporter'
 
 describe('createReporter（普通/紧急上报分流）', () => {
   afterEach(() => {

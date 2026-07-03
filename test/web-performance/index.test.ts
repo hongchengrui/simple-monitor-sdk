@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import { metricsName } from './constants'
-import MetricsStore from './lib/store'
-import calcScore from './lib/calculateScore'
-import { QUANTILE_AT_VALUE } from './utils/math'
-import getPath from './utils/getPath'
-import generateUniqueID from './utils/generateUniqueID'
+import { metricsName } from '../../packages/web-performance/src/constants'
+import MetricsStore from '../../packages/web-performance/src/lib/store'
+import calcScore from '../../packages/web-performance/src/lib/calculateScore'
+import { QUANTILE_AT_VALUE } from '../../packages/web-performance/src/utils/math'
+import getPath from '../../packages/web-performance/src/utils/getPath'
+import generateUniqueID from '../../packages/web-performance/src/utils/generateUniqueID'
 
 describe('MetricsStore', () => {
   it('set/get/has/clear/getValues', () => {
