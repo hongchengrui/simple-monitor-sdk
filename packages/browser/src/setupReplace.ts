@@ -8,12 +8,25 @@
 
 import { getFlag } from '@simple-monitor/utils'
 import { EventTypes } from '@simple-monitor/types'
-import { listenError, listenUnhandledRejection, xhrReplace, fetchReplace } from './replace'
+import { _support } from '@simple-monitor/core'
+import { collectDeviceInfo } from './deviceInfo'
+import {
+  listenError,
+  listenUnhandledRejection,
+  xhrReplace,
+  fetchReplace,
+  consoleReplace,
+  domReplace,
+  historyReplace,
+} from './replace'
 import {
   handleError,
   handleResourceError,
   handleUnhandledRejection,
   handleHttp,
+  handleConsoleEvent,
+  handleDomEvent,
+  handleHistoryEvent,
 } from './handleEvents'
 
 /**
@@ -21,17 +34,26 @@ import {
  * 每个采集器自身有 flag 幂等保护（subscribeEvent / silentFlag），可安全重复调用。
  */
 export function setupReplace(): void {
+  // 0. 采集设备信息（一次性写入全局，上报信封复用）
+  _support.deviceInfo = collectDeviceInfo()
+
   // 1. 先订阅处理器（注册回调到事件总线）
   handleError()
   handleResourceError()
   handleUnhandledRejection()
   handleHttp()
+  handleConsoleEvent()
+  handleDomEvent()
+  handleHistoryEvent()
 
   // 2. 再绑定原生 API 采集器
   listenError()
   listenUnhandledRejection()
   xhrReplace()
   fetchReplace()
+  consoleReplace()
+  domReplace()
+  historyReplace()
 }
 
 /**

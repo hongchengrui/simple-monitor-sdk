@@ -1,5 +1,4 @@
 import { logger } from './logger'
-import { variableTypeDetection } from './is'
 
 /**
  * 验证选项类型是否为期望的类型

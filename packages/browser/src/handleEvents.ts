@@ -3,25 +3,24 @@
  *
  * 每个 handler 通过 subscribeEvent 注册一条「订阅 + transform + send」的同质逻辑。
  * 只暴露处理入口，不直接绑定原生 API——那是 replace.ts 的职责。
- * 按事件类型（error / resourceError / unhandledrejection / xhr / fetch ...）拆分，互不干扰。
  */
 
 import { EventTypes, ErrorTypes, Severity, BreadCrumbTypes, HttpTypes } from '@simple-monitor/types'
-import { extractErrorStack, getFlag } from '@simple-monitor/utils'
+import { extractErrorStack, getFlag, getTimestamp } from '@simple-monitor/utils'
 import {
   breadcrumb,
   transportData,
   subscribeEvent,
   resourceTransform,
   httpTransform,
+  handleConsole,
+  options,
 } from '@simple-monitor/core'
 
 import type { ResourceErrorTarget, MonitorHttp } from '@simple-monitor/types'
 
 /**
  * 资源错误的事件总线通道名。
- * EventTypes 只覆盖「被重写的原生事件」，资源错误由 addEventListener 的 error 捕获，
- * 没有对应原生枚举，故在此用独立常量与 replace.ts 约定一致。
  */
 export const RESOURCE_ERROR_EVENT = 'resourceError'
 
@@ -32,20 +31,14 @@ export function handleError(): void {
   subscribeEvent({
     type: EventTypes.ERROR,
     callback: (data) => {
-      // 静默开关：silentError 为真时跳过
       if (getFlag(EventTypes.ERROR)) return
 
-      // data 是 window 上的 ErrorEvent：
-      //   - 正常 JS 错误：event.error 是真正的 Error 对象（含 name/stack），优先用它
-      //   - 跨域脚本错误：event.error 为 null，退而用 event 自带的 message
       const errorObj = (data && data.error) || data
       const parsed = extractErrorStack(errorObj, Severity.Normal)
       if (!parsed) return
 
-      // extractErrorStack 不设 type，此处补齐为 JS 运行时错误
       parsed.type = ErrorTypes.JAVASCRIPT_ERROR
 
-      // 错误进面包屑，还原用户操作链
       breadcrumb.push({
         type: BreadCrumbTypes.CODE_ERROR,
         category: breadcrumb.getCategory(BreadCrumbTypes.CODE_ERROR),
@@ -92,7 +85,6 @@ export function handleUnhandledRejection(): void {
     callback: (reason: unknown) => {
       if (getFlag(EventTypes.UNHANDLEDREJECTION)) return
 
-      // reason 可能是 Error / 字符串 / 普通对象，规范化为 extractErrorStack 能吃的形态
       const source =
         reason instanceof Error
           ? reason
@@ -131,7 +123,7 @@ function stringifyReason(reason: unknown): string {
 
 /**
  * 订阅 XHR / Fetch 请求事件。
- * httpTransform 规范化后：所有请求进面包屑（还原用户操作链），
+ * httpTransform 规范化后：所有请求进面包屑，
  * 仅失败请求（status===0 跨域/超时，或 status>=400）才上报为 FETCH_ERROR。
  */
 export function handleHttp(): void {
@@ -156,7 +148,65 @@ export function handleHttp(): void {
     }
   }
 
-  // dispatch 同时订阅 xhr / fetch 两个通道；flagKey 含 type，互不冲突
   subscribeEvent({ type: EventTypes.XHR, callback: dispatch })
   subscribeEvent({ type: EventTypes.FETCH, callback: dispatch })
+}
+
+/**
+ * 订阅 console 调用 → 写入面包屑（core handleConsole 决定是否记录）。
+ */
+export function handleConsoleEvent(): void {
+  subscribeEvent({
+    type: EventTypes.CONSOLE,
+    callback: (data: { level: string; args: unknown[] }) => {
+      if (getFlag(EventTypes.CONSOLE)) return
+      handleConsole(data)
+    },
+  })
+}
+
+/**
+ * 订阅 DOM 点击 → 写入面包屑（还原用户操作链）。
+ */
+export function handleDomEvent(): void {
+  subscribeEvent({
+    type: EventTypes.DOM,
+    callback: (data: { category: string; data: string }) => {
+      breadcrumb.push({
+        type: BreadCrumbTypes.CLICK,
+        category: breadcrumb.getCategory(BreadCrumbTypes.CLICK),
+        data,
+        level: Severity.Info,
+        time: getTimestamp(),
+      })
+    },
+  })
+}
+
+/**
+ * 订阅路由变化 → 触发 onRouteChange 钩子 + 写入面包屑。
+ */
+export function handleHistoryEvent(): void {
+  subscribeEvent({
+    type: EventTypes.HISTORY,
+    callback: (data: { from: string; to: string }) => {
+      const hook = (options as { onRouteChange?: (from: string, to: string) => unknown })
+        .onRouteChange
+      if (typeof hook === 'function') {
+        try {
+          hook(data.from, data.to)
+        } catch {
+          // 用户钩子报错不影响采集流程
+        }
+      }
+
+      breadcrumb.push({
+        type: BreadCrumbTypes.ROUTE,
+        category: breadcrumb.getCategory(BreadCrumbTypes.ROUTE),
+        data,
+        level: Severity.Info,
+        time: getTimestamp(),
+      })
+    },
+  })
 }

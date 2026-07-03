@@ -12,6 +12,7 @@ export class Options {
   traceIdFieldName: InitOptions['traceIdFieldName'] = 'Trace-Id'
   throttleDelayTime: InitOptions['throttleDelayTime'] = 0
   maxDuplicateCount: InitOptions['maxDuplicateCount'] = 2
+  disabled: boolean = false
   // wx-mini
   appOnLaunch: InitOptions['appOnLaunch'] = () => {}
   appOnShow: InitOptions['appOnShow'] = () => {}
@@ -54,6 +55,7 @@ export class Options {
       wxNavigateToMiniProgram,
       triggerWxEvent,
       maxDuplicateCount,
+      disabled,
       onRouteChange,
     } = options
     validateOption(beforeAppAjaxSend, 'beforeAppAjaxSend', 'function') &&
@@ -88,6 +90,7 @@ export class Options {
       (this.throttleDelayTime = throttleDelayTime)
     validateOption(maxDuplicateCount, 'maxDuplicateCount', 'number') &&
       (this.maxDuplicateCount = maxDuplicateCount)
+    validateOption(disabled, 'disabled', 'boolean') && (this.disabled = !!disabled)
     toStringValidateOption(filterXhrUrlRegExp, 'filterXhrUrlRegExp', '[object RegExp]') &&
       (this.filterXhrUrlRegExp = filterXhrUrlRegExp)
     toStringValidateOption(

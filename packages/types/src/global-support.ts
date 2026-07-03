@@ -1,6 +1,6 @@
 import { Logger } from './common'
 import { IBreadcrumb } from './breadcrumb'
-import { TrackDeviceInfo } from './track'
+import { DeviceInfo } from './device'
 import { ITransportData } from './transportData'
 
 /**
@@ -12,7 +12,7 @@ export interface MonitorSupport {
   transportData: ITransportData
   replaceFlag: { [key: string]: boolean | undefined }
   record?: any[]
-  deviceInfo?: TrackDeviceInfo
+  deviceInfo?: DeviceInfo
   options?: any // Options 类在 core 包中，避免循环依赖
   track?: any
 }

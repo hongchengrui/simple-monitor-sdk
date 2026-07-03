@@ -1,5 +1,6 @@
 import { BreadcrumbPushData } from './breadcrumb'
-import { TrackDeviceInfo, EActionType } from './track'
+import { EActionType } from './track'
+import { DeviceInfo } from './device'
 import { ErrorData } from './error'
 import { InitOptions } from './options'
 
@@ -17,7 +18,7 @@ export interface TransportDataType {
   breadcrumb?: BreadcrumbPushData[]
   data?: FinalReportType
   record?: any[]
-  deviceInfo?: TrackDeviceInfo
+  deviceInfo?: DeviceInfo
 }
 
 export type FinalReportType = ReportDataType | TrackReportData

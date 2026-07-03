@@ -24,8 +24,7 @@ export function uuidCompact(): string {
  * NanoID 字符集
  * URL 安全的字符集
  */
-const NanoIdAlphabet =
-  'useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict'
+const NanoIdAlphabet = 'useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict'
 
 /**
  * 生成 NanoID

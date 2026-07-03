@@ -3,7 +3,7 @@
  *
  * 初始化监控，并把按钮触发的错误函数挂到 window 上供 onclick 调用。
  */
-import { init } from '@simple-monitor/web'
+import { init, log } from '@simple-monitor/web'
 
 // 指向 examples/server mock 服务端
 init({
@@ -60,5 +60,19 @@ Object.assign(window, {
   fetchFail() {
     // 不存在的域名 → status 0（跨域/失败）→ 上报 FETCH_ERROR
     fetch('https://example.invalid/api').catch(() => {})
+  },
+  logConsole() {
+    // console 调用 → 进面包屑（Console 类型）
+    console.log('demo: 普通日志')
+    console.warn('demo: 警告')
+    console.error('demo: 错误日志')
+  },
+  triggerRoute() {
+    // pushState 改路由 → 进面包屑（Route 类型）+ 触发 onRouteChange 钩子
+    history.pushState(null, '', '/demo-route?t=' + Date.now())
+  },
+  logManual() {
+    // 手动上报：验证 log() API（已转出 core 实现）→ LOG_ERROR
+    log({ message: 'demo: 手动 log 上报', tag: 'manual' })
   },
 })

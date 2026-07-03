@@ -71,15 +71,19 @@ importers:
 
   packages/react:
     dependencies:
-      '@simple-monitor/browser':
+      '@simple-monitor/core':
         specifier: workspace:*
-        version: link:../browser
+        version: link:../core
       '@simple-monitor/types':
         specifier: workspace:*
         version: link:../types
+    devDependencies:
+      '@types/react':
+        specifier: ^19.2.17
+        version: 19.2.17
       react:
-        specifier: '>=16.8.0'
-        version: 19.2.6
+        specifier: ^19.2.7
+        version: 19.2.7
 
   packages/shared:
     dependencies:
@@ -97,14 +101,14 @@ importers:
 
   packages/vue:
     dependencies:
-      '@simple-monitor/browser':
+      '@simple-monitor/core':
         specifier: workspace:*
-        version: link:../browser
+        version: link:../core
       '@simple-monitor/types':
         specifier: workspace:*
         version: link:../types
       vue:
-        specifier: '>=3.0.0'
+        specifier: '>=2.0.0'
         version: 3.5.32(typescript@5.9.3)
 
   packages/web:
@@ -130,6 +134,9 @@ importers:
       '@simple-monitor/utils':
         specifier: workspace:*
         version: link:../utils
+      web-vitals:
+        specifier: ^5.3.0
+        version: 5.3.0
 
 packages:
 
@@ -727,6 +734,9 @@ packages:
 
   '@types/node@12.20.55':
     resolution: {integrity: sha512-J8xLz7q2OFulZ2cyGTLE1TbbZcjpno7FaN6zdJNrgAdrJ+DZzh/uFR6YrTb4C+nXakvud8Q4+rbhoIWlYQbUFQ==}
+
+  '@types/react@19.2.17':
+    resolution: {integrity: sha512-MXfmqaVPEVgkBT/aY0aGCkRWWtByiYQXo3xdQ8r5RzuFrPiRn8Gar2tQdXSUQ2GKV3bkXckek89V8wQBY2Q/Aw==}
 
   '@typescript-eslint/eslint-plugin@7.18.0':
     resolution: {integrity: sha512-94EQTWZ40mzBc42ATNIBimBEDltSJ9RQHCC8vc/PDbxi4k8dVwUAv4o98dk50M1zB+JGFxp43FP7f8+FP8R6Sw==}
@@ -1491,8 +1501,8 @@ packages:
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
 
-  react@19.2.6:
-    resolution: {integrity: sha512-sfWGGfavi0xr8Pg0sVsyHMAOziVYKgPLNrS7ig+ivMNb3wbCBw3KxtflsGBAwD3gYQlE/AEZsTLgToRrSCjb0Q==}
+  react@19.2.7:
+    resolution: {integrity: sha512-HNe9WslTbXmFK8o8cmwgAeJFSBvt1bPdHCVKtaaV+WlAN36mpT4hcRpwbf3fY56ar2oIXzsBpOAiIRHAdY0OlQ==}
     engines: {node: '>=0.10.0'}
 
   read-yaml-file@1.1.0:
@@ -1769,6 +1779,9 @@ packages:
     peerDependenciesMeta:
       typescript:
         optional: true
+
+  web-vitals@5.3.0:
+    resolution: {integrity: sha512-q6LWsLatGYZp5VGBIOvbTj6JBV2nOmC8KvWztXBmwJcfFAzhwKwbOxhUH306XY3CcaZDUlSmSuNPBsCn0bFu+g==}
 
   which@2.0.2:
     resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==}
@@ -2267,6 +2280,10 @@ snapshots:
   '@types/estree@1.0.8': {}
 
   '@types/node@12.20.55': {}
+
+  '@types/react@19.2.17':
+    dependencies:
+      csstype: 3.2.3
 
   '@typescript-eslint/eslint-plugin@7.18.0(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.9.3))(eslint@8.57.1)(typescript@5.9.3)':
     dependencies:
@@ -3074,7 +3091,7 @@ snapshots:
 
   queue-microtask@1.2.3: {}
 
-  react@19.2.6: {}
+  react@19.2.7: {}
 
   read-yaml-file@1.1.0:
     dependencies:
@@ -3345,6 +3362,8 @@ snapshots:
       '@vue/shared': 3.5.32
     optionalDependencies:
       typescript: 5.9.3
+
+  web-vitals@5.3.0: {}
 
   which@2.0.2:
     dependencies:

@@ -3,6 +3,11 @@
  *
  * 定义设备类型、浏览器类型和操作系统的常量。
  *
+ * ⚠️ 注意：本文件为纯常量集合，目前**无运行时采集逻辑使用**。
+ *    实际设备信息采集见 `@simple-monitor/browser` 的 `collectDeviceInfo()`，
+ *    上报结构类型为 `DeviceInfo`（`@simple-monitor/types/device`）。
+ *    本常量保留供未来「采集分类 / 小程序端」复用。
+ *
  * @module device
  */
 

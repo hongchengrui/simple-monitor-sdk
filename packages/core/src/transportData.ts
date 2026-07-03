@@ -26,6 +26,7 @@ import {
 import { breadcrumb } from './breadcrumb'
 import { createErrorId } from './errorId'
 import { _support } from './global'
+import { options } from './options'
 import { SDK_VERSION, SDK_NAME } from '@simple-monitor/shared'
 
 // 获取全局对象
@@ -61,6 +62,7 @@ export class TransportData implements ITransportData {
   trackKey: string
   errorDsn: string
   trackDsn: string
+  private isUnloading = false
 
   constructor() {
     this.queue = new Queue()
@@ -74,6 +76,7 @@ export class TransportData implements ITransportData {
     this.trackKey = ''
     this.errorDsn = ''
     this.trackDsn = ''
+    this.setupUnloadListener()
   }
 
   /**
@@ -327,10 +330,53 @@ export class TransportData implements ITransportData {
   }
 
   /**
+   * 使用 navigator.sendBeacon 上报（页面卸载场景，浏览器保证发出）。
+   * 不可用或排队失败时降级到 xhrPost。数据以 JSON 字符串发送。
+   */
+  beaconPost(data: TransportDataType, url: string): void {
+    const beacon = (_global.navigator as any)?.sendBeacon
+    if (typeof beacon === 'function') {
+      try {
+        if (beacon.call(_global.navigator, url, JSON.stringify(data))) return
+      } catch (error) {
+        logger.error('sendBeacon error:', error)
+      }
+    }
+    // 降级到 XHR
+    this.xhrPost(data, url)
+  }
+
+  /**
+   * 监听页面卸载（pagehide / visibilitychange→hidden）置 isUnloading 标记，
+   * send 据此切 sendBeacon 通道（XHR 在 unload 会丢数据）。非浏览器环境跳过。
+   */
+  private setupUnloadListener(): void {
+    // 非浏览器环境（无 addEventListener / document）跳过；
+    // 用 _global 而非直接 window/document，保持 core 框架无关、不依赖 DOM 类型
+    if (!_global || typeof _global.addEventListener !== 'function') return
+    const markUnloading = (): void => {
+      this.isUnloading = true
+    }
+    try {
+      _global.addEventListener('pagehide', markUnloading)
+      const doc = _global.document
+      if (doc && typeof doc.addEventListener === 'function') {
+        doc.addEventListener('visibilitychange', () => {
+          if (doc.visibilityState === 'hidden') markUnloading()
+        })
+      }
+    } catch (error) {
+      logger.error('setupUnloadListener error:', error)
+    }
+  }
+
+  /**
    * 核心发送方法
    * 根据环境和配置选择上报方式
    */
   async send(data: FinalReportType): Promise<void> {
+    // disabled：完全关闭上报（采集器仍装载、面包屑仍记录，但不发出请求）
+    if (options.disabled) return
     let dsn = ''
 
     // 判断数据类型并选择对应的 DSN
@@ -366,7 +412,10 @@ export class TransportData implements ITransportData {
 
     // 根据环境选择上报方式
     if (isBrowserEnv) {
-      return this.useImgUpload ? this.imgRequest(result, dsn) : this.xhrPost(result, dsn)
+      if (this.useImgUpload) return this.imgRequest(result, dsn)
+      // 页面卸载时优先 sendBeacon（浏览器保证发出，XHR 在 unload 会丢）
+      if (this.isUnloading) return this.beaconPost(result, dsn)
+      return this.xhrPost(result, dsn)
     }
     if (isWxMiniEnv) {
       return this.wxPost(result, dsn)

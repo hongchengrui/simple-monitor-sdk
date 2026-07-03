@@ -21,8 +21,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@simple-monitor/types": "workspace:*",
-    "@simple-monitor/browser": "workspace:*"
+    "@simple-monitor/core": "workspace:*",
+    "@simple-monitor/types": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=16.8.0"
@@ -37,5 +37,9 @@
     "react"
   ],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@types/react": "^19.2.17",
+    "react": "^19.2.7"
+  }
 }

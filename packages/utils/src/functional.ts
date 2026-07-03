@@ -69,10 +69,7 @@ export async function silentAsync<T>(fn: () => Promise<T>): Promise<T | undefine
  * @param fn 要执行的函数
  * @param errorFn 错误回调函数
  */
-export function nativeTryCatch(
-  fn: () => any,
-  errorFn?: (error: Error) => void
-): void {
+export function nativeTryCatch(fn: () => any, errorFn?: (error: Error) => void): void {
   try {
     fn()
   } catch (err) {

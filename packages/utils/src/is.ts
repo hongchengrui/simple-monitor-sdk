@@ -36,7 +36,7 @@ export function isError(wat: any): boolean {
   }
 }
 
-export function isEmptyObject(obj: Object): boolean {
+export function isEmptyObject(obj: Record<string, unknown>): boolean {
   return variableTypeDetection.isObject(obj) && Object.keys(obj).length === 0
 }
 
@@ -54,6 +54,6 @@ export function isInstanceOf(wat: any, base: any): boolean {
   }
 }
 
-export function isExistProperty(obj: Object, key: string | number | symbol): boolean {
-  return obj.hasOwnProperty(key)
+export function isExistProperty(obj: object, key: string | number | symbol): boolean {
+  return Object.prototype.hasOwnProperty.call(obj, key)
 }

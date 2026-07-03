@@ -22,10 +22,10 @@
   },
   "dependencies": {
     "@simple-monitor/types": "workspace:*",
-    "@simple-monitor/browser": "workspace:*"
+    "@simple-monitor/core": "workspace:*"
   },
   "peerDependencies": {
-    "vue": ">=3.0.0"
+    "vue": ">=2.0.0"
   },
   "peerDependenciesMeta": {
     "vue": {

@@ -28,8 +28,7 @@ export function init(options: InitOptions = {}): void {
 
 /**
  * 主动上报一条日志/错误（手动 API，对应 README 的 log）。
- * M1 暂留入口，具体语义 M2/M4 补齐。
+ * 实现位于 core（extractErrorStack + breadcrumb + transportData.send），
+ * 此处转出，避免在 browser 重新声明空函数遮蔽 core 的真实现。
  */
-export function log(): void {
-  // TODO(M2): 透传到 transportData.send，支持 message/level 自定义
-}
+export { log } from '@simple-monitor/core'

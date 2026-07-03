@@ -3,7 +3,13 @@
  * 包含 SDK 特定的全局状态
  */
 
-import { MonitorSupport, EventTypes, WxAppEvents, WxPageEvents, InitOptions } from '@simple-monitor/types'
+import {
+  MonitorSupport,
+  EventTypes,
+  WxAppEvents,
+  WxPageEvents,
+  InitOptions,
+} from '@simple-monitor/types'
 import { getGlobal, logger, setFlag } from '@simple-monitor/utils'
 
 /**
