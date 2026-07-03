@@ -1,62 +1,174 @@
-/**
- * Web Performance 类型定义
- */
+/** Web Performance 类型契约（对齐 encode，自包含、不依赖外部 types 包） */
 
-/**
- * Web 性能指标
- */
-export interface PerformanceMetrics {
-  /** 最大内容绘制 (毫秒) */
-  LCP?: number
+export interface IConfig {
+  appId?: string
+  version?: string
+  reportCallback: (data: IReportData) => void
+  immediately: boolean
+  isCustomEvent?: boolean
+  logFpsCount?: number
+  apiConfig?: {
+    [prop: string]: Array<string>
+  }
+  hashHistory?: boolean
+  excludeRemotePath?: Array<string>
+  maxWaitCCPDuration: number
+  scoreConfig?: IScoreConfig
+  /** 慢资源判定阈值（ms）：单个资源 duration >= 此值视为慢，默认 300 */
+  resourceThreshold?: number
+  /** 慢资源 Top-N 数量，默认 10 */
+  resourceTopN?: number
+}
 
-  /** 首次输入延迟 (毫秒) */
-  FID?: number
+export interface IPerformanceNavigationTiming {
+  dnsLookup?: number
+  initialConnection?: number
+  ssl?: number
+  ttfb?: number
+  contentDownload?: number
+  domParse?: number
+  deferExecuteDuration?: number
+  domContentLoadedCallback?: number
+  resourceLoad?: number
+  domReady?: number
+  pageLoad?: number
+}
 
-  /** 首次内容绘制 (毫秒) */
-  FCP?: number
+export interface IDeviceInformation {
+  deviceMemory?: number
+  hardwareConcurrency?: number
+  jsHeapSizeLimit?: number
+  totalJSHeapSize?: number
+  usedJSHeapSize?: number
+}
 
-  /** 首字节时间 (毫秒) */
-  TTFB?: number
+export interface INetworkInformation {
+  downlink?: number
+  effectiveType?: IEffectiveType
+  rtt?: number
+}
 
-  /** 累积布局偏移 (评分) */
-  CLS?: number
+export interface IScoreConfig {
+  [prop: string]: { median: number; p10: number }
+}
 
-  /** 首次绘制 (毫秒) */
-  FP?: number
+export interface IEffectiveType {
+  type: '4g' | '3g' | '2g' | 'slow-2g'
+}
 
-  /** 可交互时间 (毫秒) */
-  TTI?: number
+export interface IPageInformation {
+  host: string
+  hostname: string
+  href: string
+  protocol: string
+  origin: string
+  port: string
+  pathname: string
+  search: string
+  hash: string
+  userAgent?: string
+  screenResolution: string
+}
 
-  /** 总阻塞时间 (毫秒) */
-  TBT?: number
+export interface IMetrics {
+  name: string
+  value: any
+  score?: number
+}
 
-  /** 速度指数 */
-  SI?: number
+export interface IWebVitals {
+  immediately: boolean
+  getCurrentMetrics(): IMetricsObj
+  setStartMark(markName: string): void
+  setEndMark(markName: string): void
+  clearMark(markName: string): void
+  customContentfulPaint(): void
+}
 
-  /** 帧率 (FPS) */
-  FPS?: number
+export interface IReportHandler {
+  /**
+   * urgent=true 表示本次上报来自页面隐藏/卸载，必须同步送达回调——
+   * requestIdleCallback 在页面销毁后不会执行，批量数据会整批丢失。
+   */
+  (metrics: IMetrics | IMetricsObj, urgent?: boolean): void
+}
 
-  /** 页面加载时间 (毫秒) */
-  loadTime?: number
+export interface PerformanceEntryHandler {
+  (entry: PerformanceEntry): void
+}
 
-  /** DNS 查询时间 (毫秒) */
-  dnsTime?: number
+/** event entryType（INP 用）的交互时序条目 */
+export interface PerformanceEventTiming extends PerformanceEntry {
+  processingStart: DOMHighResTimeStamp
+  processingEnd: DOMHighResTimeStamp
+  duration: DOMHighResTimeStamp
+  interactionId?: number
+  cancelable?: boolean
+  target?: Element
+}
 
-  /** TCP 连接时间 (毫秒) */
-  tcpTime?: number
+export interface OnHiddenCallback {
+  (event: Event): void
+}
 
-  /** SSL/TLS 协商时间 (毫秒) */
-  sslTime?: number
+export interface OnPageChangeCallback {
+  (event?: Event): void
+}
 
-  /** 请求时间 (毫秒) */
-  requestTime?: number
+export interface IReportData {
+  sessionId: string
+  appId?: string
+  version?: string
+  data: IMetrics | IMetricsObj
+  timestamp: number
+}
 
-  /** 响应时间 (毫秒) */
-  responseTime?: number
+export interface IMetricsObj {
+  [prop: string]: IMetrics
+}
 
-  /** DOM 处理时间 (毫秒) */
-  domProcessingTime?: number
+/** 单个资源的加载阶段拆解（跨域无 TAO 时整体拿不到 → ResourceTimingEntry.stages = null） */
+export interface ResourceStages {
+  dnsLookup: number
+  connection: number
+  ssl: number
+  ttfb: number
+  download: number
+}
 
-  /** 资源加载时间 (毫秒) */
-  resourceLoadTime?: number
+/** 单个资源采集项 */
+export interface ResourceTimingEntry {
+  url: string
+  initiatorType: string
+  duration: number
+  transferSize: number
+  stages: ResourceStages | null
+}
+
+/** 资源耗时上报报告：慢资源 Top-N + 会话网络快照（上下文，不参与判定） */
+export interface ResourceTimingReport {
+  total: number
+  threshold: number
+  network: INetworkInformation
+  slowTop: ResourceTimingEntry[]
+}
+
+export interface LayoutShift extends PerformanceEntry {
+  value: number
+  hadRecentInput: boolean
+}
+
+/** 对数正态分布评分曲线 */
+export interface Curve {
+  median: number
+  podr?: number
+  p10?: number
+}
+
+declare global {
+  interface Window {
+    __monitor_xhr__: boolean
+    __monitor_fetch__: boolean
+    __monitor_sessionId__: string
+  }
 }
