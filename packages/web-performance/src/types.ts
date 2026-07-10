@@ -12,7 +12,7 @@ export interface IConfig {
   }
   hashHistory?: boolean
   excludeRemotePath?: Array<string>
-  maxWaitCCPDuration: number
+  maxWaitCCPDuration?: number
   scoreConfig?: IScoreConfig
   /** 慢资源判定阈值（ms）：单个资源 duration >= 此值视为慢，默认 300 */
   resourceThreshold?: number

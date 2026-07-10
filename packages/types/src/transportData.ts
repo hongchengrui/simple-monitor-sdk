@@ -21,7 +21,7 @@ export interface TransportDataType {
   deviceInfo?: DeviceInfo
 }
 
-export type FinalReportType = ReportDataType | TrackReportData
+export type FinalReportType = ReportDataType | TrackReportData | PerformanceReportData
 
 interface ICommonDataType {
   isTrackData?: boolean
@@ -97,8 +97,8 @@ export interface PerformanceReportData {
   /** 事件类型标识 */
   eventType: 'performance'
 
-  /** 性能指标 */
-  metrics: Record<string, number | undefined>
+  /** 性能指标（值可为数值或结构化对象，如 RT 慢资源列表、NavigationTiming 瀑布） */
+  metrics: Record<string, unknown>
 }
 
 /**
@@ -110,6 +110,15 @@ export interface BehaviorReportData {
 
   /** 行为数据 */
   behavior: Record<string, unknown>
+}
+
+/**
+ * 判断是否为性能上报数据（eventType: 'performance'）。
+ * 性能数据走 trackDsn、不生成 errorId（不去重），所以必须在 isReportDataType 之前判断——
+ * 否则性能（无 actionType/isTrackData）会被 isReportDataType 误判为 error 走去重。
+ */
+export function isPerformanceData(data: FinalReportType): data is PerformanceReportData {
+  return (data as PerformanceReportData).eventType === 'performance'
 }
 
 /**

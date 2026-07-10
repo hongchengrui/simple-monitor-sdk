@@ -11,7 +11,7 @@ import type {
   ITransportData,
   DeviceInfo,
 } from '@simple-monitor/types'
-import { isReportDataType } from '@simple-monitor/types'
+import { isReportDataType, isPerformanceData } from '@simple-monitor/types'
 import {
   Queue,
   generateUUID,
@@ -212,8 +212,8 @@ export class TransportData implements ITransportData {
    * 生成 errorId 并执行钩子
    */
   async beforePost(data: FinalReportType): Promise<TransportDataType | false> {
-    // 如果是错误数据，生成 errorId
-    if (isReportDataType(data) && this.apikey) {
+    // 如果是错误数据，生成 errorId（性能数据不去重，跳过）
+    if (!isPerformanceData(data) && isReportDataType(data) && this.apikey) {
       const errorId = createErrorId(data, this.apikey)
       if (errorId === null) {
         // 重复错误超过阈值，不上报
@@ -380,7 +380,14 @@ export class TransportData implements ITransportData {
     let dsn = ''
 
     // 判断数据类型并选择对应的 DSN
-    if (isReportDataType(data)) {
+    // 性能数据走 trackDsn（埋点通道），不走 error 去重
+    if (isPerformanceData(data)) {
+      dsn = this.trackDsn
+      if (isEmpty(dsn)) {
+        logger.error('trackDsn为空，没有传入埋点上报的dsn地址，请在init中传入')
+        return
+      }
+    } else if (isReportDataType(data)) {
       dsn = this.errorDsn
       if (isEmpty(dsn)) {
         logger.error('dsn为空，没有传入监控错误上报的dsn地址，请在init中传入')

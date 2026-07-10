@@ -4,10 +4,10 @@
   "description": "Web integration bundle for Simple Monitor SDK",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/index.d.mts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
+      "types": "./dist/index.d.mts",
       "import": "./dist/index.js"
     }
   },
@@ -24,6 +24,9 @@
     "@simple-monitor/types": "workspace:*",
     "@simple-monitor/utils": "workspace:*",
     "@simple-monitor/browser": "workspace:*",
+    "@simple-monitor/core": "workspace:*",
+    "@simple-monitor/react": "workspace:*",
+    "@simple-monitor/vue": "workspace:*",
     "@simple-monitor/web-performance": "workspace:*"
   },
   "keywords": [

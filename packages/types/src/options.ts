@@ -29,6 +29,12 @@ export interface InitOptions
   enableTrack?: boolean
   trackDsn?: string
   maxDuplicateCount?: number
+  /** 性能采集开关（默认开，false 关闭 web-performance 采集） */
+  performance?: boolean
+  /** 慢资源判定阈值 ms（默认 300），透传给 web-performance RT */
+  resourceThreshold?: number
+  /** 慢资源 Top-N（默认 10），透传给 web-performance RT */
+  resourceTopN?: number
 }
 
 export interface HooksTypes {

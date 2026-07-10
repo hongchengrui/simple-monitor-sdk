@@ -77,6 +77,9 @@ importers:
       '@simple-monitor/types':
         specifier: workspace:*
         version: link:../types
+      '@simple-monitor/utils':
+        specifier: workspace:*
+        version: link:../utils
     devDependencies:
       '@types/react':
         specifier: ^19.2.17
@@ -107,6 +110,9 @@ importers:
       '@simple-monitor/types':
         specifier: workspace:*
         version: link:../types
+      '@simple-monitor/utils':
+        specifier: workspace:*
+        version: link:../utils
       vue:
         specifier: '>=2.0.0'
         version: 3.5.32(typescript@5.9.3)
@@ -116,12 +122,21 @@ importers:
       '@simple-monitor/browser':
         specifier: workspace:*
         version: link:../browser
+      '@simple-monitor/core':
+        specifier: workspace:*
+        version: link:../core
+      '@simple-monitor/react':
+        specifier: workspace:*
+        version: link:../react
       '@simple-monitor/types':
         specifier: workspace:*
         version: link:../types
       '@simple-monitor/utils':
         specifier: workspace:*
         version: link:../utils
+      '@simple-monitor/vue':
+        specifier: workspace:*
+        version: link:../vue
       '@simple-monitor/web-performance':
         specifier: workspace:*
         version: link:../web-performance
