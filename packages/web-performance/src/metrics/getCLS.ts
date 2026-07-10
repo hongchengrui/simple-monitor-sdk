@@ -78,7 +78,7 @@ export const initCLS = (
   store: MetricsStore,
   report: IReportHandler,
   immediately = true,
-  scoreConfig?: IScoreConfig,
+  scoreConfig?: IScoreConfig
 ): void => {
   if (!isPerformanceObserverSupported()) {
     console.warn('browser do not support performanceObserver')
@@ -86,9 +86,7 @@ export const initCLS = (
   }
 
   const acc = createClsAccumulator()
-  const po = observe('layout-shift', (entry: PerformanceEntry) =>
-    acc.process(entry as LayoutShift),
-  )
+  const po = observe('layout-shift', (entry: PerformanceEntry) => acc.process(entry as LayoutShift))
 
   const stopListening = (): void => {
     // 清空 observer 缓冲区里尚未回调的条目，避免漏采

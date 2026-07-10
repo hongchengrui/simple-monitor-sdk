@@ -8,9 +8,7 @@ import { roundByFour } from '../utils'
 import observe from '../lib/observe'
 import calcScore from '../lib/calculateScore'
 
-const getLCP = (
-  lcp: { value: PerformanceEntry | undefined },
-): PerformanceObserver | undefined => {
+const getLCP = (lcp: { value: PerformanceEntry | undefined }): PerformanceObserver | undefined => {
   if (!isPerformanceObserverSupported()) {
     console.warn('browser do not support performanceObserver')
     return
@@ -29,7 +27,7 @@ export const initLCP = (
   store: MetricsStore,
   report: IReportHandler,
   immediately = true,
-  scoreConfig?: IScoreConfig,
+  scoreConfig?: IScoreConfig
 ): void => {
   // undefined 明确表示「尚未采到有效 LCP」，取代 encode 的 {} as PerformanceEntry
   // ——后者会让未命中分支时 value.startTime 为 undefined，最终上报 value=NaN、score=NaN
