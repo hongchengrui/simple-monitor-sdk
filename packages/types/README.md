@@ -1,100 +1,79 @@
 # @simple-monitor/types
 
-> Simple Monitor SDK 类型定义包
+Simple Monitor SDK 的共享类型定义包。位于分层最底层，被所有上层包依赖，本身不含运行时逻辑（仅枚举、接口、类型别名）。
 
-## 简介
+## 安装
 
-本包定义了整个 Simple Monitor SDK 中使用的所有 TypeScript 类型、枚举和接口。它是 SDK 的类型基础层，被其他所有包依赖。
+```bash
+npm i @simple-monitor/types
+```
 
-## 包内容
+> 该包通常作为其它 `@simple-monitor/*` 包的依赖被间接引入，一般无需单独安装。独立安装仅用于需要复用 SDK 类型（如自定义上报数据结构）的场景。
 
-### 错误类型
+## 用法
 
-- `ErrorTypes` - 错误分类枚举（JS 错误、Promise 错误、HTTP 错误等）
-- `ErrorData` - 错误数据结构
-- `ReportDataType` - 上报数据类型
+```ts
+import type { InitOptions, ReportDataType } from '@simple-monitor/types'
+import { Severity, ErrorTypes } from '@simple-monitor/types'
 
-### 事件类型
-
-- `EventTypes` - 可拦截事件类型（XHR、FETCH、ERROR、HISTORY 等）
-- `WxAppEvents` - 微信小程序 App 级事件
-- `WxPageEvents` - 微信小程序 Page 级事件
-- `WxRouterEvents` - 微信小程序路由事件
-
-### 用户行为栈
-
-- `BreadCrumbTypes` - 行为类型（路由、点击、HTTP、控制台等）
-- `BreadCrumbCategory` - 行为类别（HTTP、USER、DEBUG、EXCEPTION、LIFECYCLE）
-- `BreadcrumbPushData` - 行为数据结构
-- `IBreadcrumb` - 行为栈接口
-
-### 严重程度
-
-- `Severity` - 严重程度枚举（Error、Warning、Info、Debug 等）
-- `SeverityUtils` - 严重程度工具类
-
-### HTTP 相关
-
-- `HttpMethod` / `EMethods` - HTTP 方法枚举
-- `HttpCodes` - HTTP 状态码常量
-- `HttpTypes` - 被监控的 HTTP 请求类型
-
-### 配置选项
-
-- `InitOptions` - SDK 初始化配置选项
-- `HooksTypes` - 钩子函数类型定义
-- `SilentEventTypes` - 静默事件配置
-- `WxSilentEventTypes` - 微信小程序静默事件配置
-- `WxMiniHooksTypes` - 微信小程序钩子配置
-- `BrowserHooksTypes` - 浏览器钩子配置
-
-### 数据传输
-
-- `TransportDataType` - 传输数据类型
-- `AuthInfo` - 认证信息结构
-- `FinalReportType` - 最终上报类型
-- `ITransportData` - 数据传输接口
-
-### 埋点相关
-
-- `EActionType` - 埋点动作类型（页面、事件、曝光、时长等）
-- `TrackDeviceInfo` - 埋点设备信息
-- `ITrackBaseParam` - 埋点基础参数
-
-### 手动上报
-
-- `LogTypes` - 手动日志上报参数
-
-### 其他
-
-- `TNumStrObj` - 字符串或数字对象类型
-- `ReplaceCallback` - 替换回调类型
-- `MonitorHttp` - HTTP 监控数据类型
-- `ResourceErrorTarget` - 资源错误目标类型
-
-## 使用示例
-
-```typescript
-import {
-  ErrorTypes,
-  EventTypes,
-  Severity,
-  type InitOptions,
-  type TransportDataType,
-} from '@simple-monitor/types'
-
-// 使用枚举
-const errorType = ErrorTypes.JAVASCRIPT_ERROR
-const eventType = EventTypes.ERROR
-const severity = Severity.Critical
-
-// 使用类型
 const options: InitOptions = {
-  dsn: 'https://monitor.example.com/error',
-  apikey: 'your-api-key',
+  dsn: 'https://up.example.com/report',
+  apikey: 'your-apikey',
+}
+
+function format(data: ReportDataType) {
+  return `${data.type ?? ErrorTypes.UNKNOWN}: ${data.message}`
 }
 ```
 
-## 依赖
+## API
 
-本包**无任何依赖**，是最底层的类型定义包。
+类型按模块分组导出，以下列出各模块的主要导出项。
+
+### 错误与事件枚举（`eventTypes`）
+
+- `ErrorTypes` — 上报错误分类枚举（`JAVASCRIPT_ERROR` / `LOG_ERROR` / `FETCH_ERROR` / `VUE_ERROR` / `REACT_ERROR` / `RESOURCE_ERROR` / `PROMISE_ERROR` / `ROUTE_ERROR` 等）。
+- `EventTypes` — 被重写 / 监听的原生事件类型枚举（`xhr` / `fetch` / `console` / `dom` / `history` / `error` / `unhandledrejection` 等）。
+- `BreadCrumbTypes` — 用户行为栈事件类型枚举（`Click` / `Xhr` / `Fetch` / `Route` / `Vue` / `React` / `Resource` 等）。
+- `BreadCrumbCategory` — 行为分类枚举（`http` / `user` / `debug` / `exception` / `lifecycle`）。
+- `WxAppEvents` / `WxPageEvents` / `WxRouterEvents` / `WxEvents` / `CompositeEvents` — 微信小程序原生事件枚举。
+- `ERROR_TYPE_RE` / `globalVar` — 错误信息解析正则与少量运行时开关。
+
+### 等级（`Severity`）
+
+- `Severity` — 日志 / 上报等级枚举（`Debug` / `Info` / `Warning` / `Error`，以及上报等级 `Low` / `Normal` / `High` / `Critical`）。
+- `SeverityUtils.fromString(level)` — 由字符串推断 `Severity`。
+
+### HTTP 常量（`httpConstants`）
+
+- `HttpMethod` — 标准 HTTP 方法枚举（`GET` / `POST` / `PUT` / `DELETE` / `PATCH` / `HEAD` / `OPTIONS`）。
+- `EMethods` — 兼容用的首字母大写 HTTP 方法枚举（`Get` / `Post` 等）。
+- `HttpCodes` — 常见 HTTP 状态码枚举（400 / 401 / 403 / 404 / 408 / 500 / 502 / 503 / 504）。
+- `HttpTypes` — 被监控的请求类型枚举（`xhr` / `fetch`）。
+
+### 上报数据结构（核心类型）
+
+- `ErrorData` — 错误基础信息（type / message / stack / filename / lineno / colno / time / errorId）。
+- `DeviceInfo` — 浏览器设备信息（ua / browser / os / deviceType / screen / netType 等）。
+- `ReportDataType` — 错误 / HTTP 类上报数据结构（含 `request` / `response` / `componentName` 等可选字段）。
+- `TrackReportData` — 埋点类上报数据结构（`actionType` / `trackId` / `durationTime` 等）。
+- `PerformanceReportData` — 性能类上报数据结构（`{ eventType: 'performance', metrics }`）。
+- `TransportDataType` — 最终上报信封（`authInfo` + `breadcrumb` + `data` + `deviceInfo`）。
+- `AuthInfo` — 上报认证信息（`apikey` / `trackKey` / `sdkVersion` / `sdkName` / `trackerId`）。
+- `isReportDataType(data)` — 类型守卫，判断是否为错误类上报数据。
+- `isPerformanceData(data)` — 类型守卫，判断是否为性能类上报数据。
+
+### 初始化与全局支持
+
+- `InitOptions` — SDK 初始化配置（`dsn` / `apikey` / `maxBreadcrumbs` / `silentXxx` 系列 / `performance` / `resourceThreshold` / `resourceTopN` / 各类 hook）。
+- `HooksTypes` — 上报前 / 面包屑前 / ajax 发送前等钩子函数类型。
+- `SilentEventTypes` / `WxSilentEventTypes` / `WxMiniHooksTypes` / `BrowserHooksTypes` — 各类静默开关与平台钩子。
+- `MonitorSupport` — 全局监控支持对象（logger / breadcrumb / transportData / replaceFlag / deviceInfo）。
+
+### 其它
+
+- `BreadcrumbPushData` / `IBreadcrumb` — 用户行为栈数据与接口。
+- `LogTypes` — 手动 `log()` 入参类型（message / tag / level / ex / type）。
+- `IRouter` / `TriggerConsole` — 路由变化、控制台拦截的结构。
+- `MonitorHttp` / `MonitorXMLHttpRequest` — HTTP 监控数据与扩展的 XHR。
+- `voidFun` / `IAnyObject` / `TNumStrObj` / `LocalStorageValue` 等通用辅助类型。

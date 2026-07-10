@@ -1,205 +1,161 @@
 # Simple Monitor SDK
 
-> 轻量级跨平台前端监控 SDK
+> 轻量级、模块化的前端监控 SDK（浏览器 + Vue + React）
 
-[![npm version](https://badge.fury.io/js/%40simple-monitor%2Fweb.svg)](https://www.npmjs.com/package/@simple-monitor/web)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## 简介
 
-Simple Monitor SDK 是一个轻量级、模块化的前端监控解决方案，支持多平台部署，提供**错误追踪**、**性能监控**、**用户行为分析**等核心功能。
+Simple Monitor SDK 是一个轻量级、模块化的前端监控方案，提供**错误追踪**、**性能监控**、**用户行为（面包屑）**与**框架错误捕获**。门面包 `@simple-monitor/web` 一个 `init()` 启用全部能力。
 
 ### 特性
 
-- **📦 模块化设计** - 按需引入，减小包体积
-- **🎯 多平台支持** - 浏览器、React、Vue、微信小程序
-- **🔍 错误追踪** - JS 错误、Promise 拒绝、HTTP 错误、资源加载错误
-- **📊 性能监控** - Web Vitals、导航时序、资源时序
-- **🔖 行为追踪** - 面包屑记录、用户交互、路由变化
-- **⚡ 轻量高效** - 零依赖核心库，高性能采集
-- **🔧 易于集成** - 简单的 API，开箱即用
+- **🐛 错误追踪** — JS 异常 / Promise / HTTP（xhr+fetch）/ 资源加载错误，自动捕获 + 去重
+- **📊 性能监控** — Web Vitals（FP/FCP/LCP/CLS/INP）+ FPS + 加载瀑布 + **RT 慢资源定位**
+- **🔖 用户行为** — 面包屑（HTTP / 点击 / 路由 / console），随错误上报
+- **🧩 框架适配** — Vue（Vue2/Vue3 双兼容）/ React（开箱即用 ErrorBoundary）
+- **⚡ 卸载可靠** — 页面卸载自动切 `sendBeacon`，不丢数据
+- **📦 模块化** — 分层（基础/核心/端侧/门面），可按需引入子包
 
 ## 快速开始
 
 ### 安装
 
 ```bash
-# npm
-npm install @simple-monitor/web
-
-# yarn
-yarn add @simple-monitor/web
-
-# pnpm
-pnpm add @simple-monitor/web
+npm i @simple-monitor/web
+# 或 yarn add / pnpm add @simple-monitor/web
 ```
 
-### 基础用法
+### 基础用法（一个 init 启用全部）
 
-```typescript
-import { init } from '@simple-monitor/web';
+```ts
+import { init } from '@simple-monitor/web'
 
 init({
-  dsn: 'https://your-monitoring-endpoint.com/upload',
-  trackerId: 'user-123',
-});
+  dsn: 'https://up.example.com/report',
+  apikey: 'your-apikey',
+})
 ```
 
-### 平台特定包
+自动启用：错误 / HTTP / Promise / 资源采集 + 性能采集 + 卸载 sendBeacon。
 
-```bash
-# 浏览器环境
-npm install @simple-monitor/browser
+### 按需引入（只装你要的，不拉全量）
 
-# React 项目
-npm install @simple-monitor/react
+SDK 分层模块化，可只装需要的子包，不必引入门面：
 
-# Vue 项目
-npm install @simple-monitor/vue
+**只做性能采集**（不拉 vue / react / browser）：
 
-# 微信小程序
-npm install @simple-monitor/wx-miniprogram
+```ts
+import { WebVitals } from '@simple-monitor/web-performance'  // 独立引擎，仅依赖 types/utils
+
+new WebVitals({
+  reportCallback: (data) => {
+    // 性能指标交给你，自己发到服务（卸载务必用 sendBeacon 防丢）
+    navigator.sendBeacon('/your-perf-endpoint', JSON.stringify(data))
+  },
+  resourceThreshold: 300,  // 慢资源阈值 ms
+})
 ```
 
-## 文档
+| 场景 | 装哪个 | 说明 |
+|---|---|---|
+| 全部能力 | `@simple-monitor/web` | 门面，一个 `init()` |
+| 只性能 | `@simple-monitor/web-performance` | 独立引擎，`reportCallback` 自己接 |
+| 只错误采集 | `@simple-monitor/browser` | 浏览器 8 采集器 |
+| 只框架错误 | `@simple-monitor/vue` / `@simple-monitor/react` | 配合 core |
 
-详细文档请查看：
+> 门面 `web` = 方便（全量一个 init）；单独子包 = 按需（体积小、自己编排）。详见各 `packages/*/README.md`。
 
-- [使用指南](./docs/guide.md)
-- [API 参考](./docs/api.md)
-- [配置选项](./docs/config.md)
-- [平台适配](./docs/platforms.md)
-- [包说明](./packages/README.md)
+### 框架错误捕获
 
-## 开发
+```ts
+import { MonitorVue, ErrorBoundary } from '@simple-monitor/web'
 
-### 环境要求
+// Vue（Vue3 / Vue2 通用）
+app.use(MonitorVue)
 
-- Node.js >= 16.0.0
-- pnpm >= 8.0.0
-
-### 项目结构
-
-```
-simple-monitor-sdk/
-├── packages/
-│   ├── types/              # 类型定义
-│   ├── utils/              # 工具函数
-│   ├── shared/             # 共享常量
-│   ├── core/               # 核心逻辑
-│   ├── browser/            # 浏览器适配
-│   ├── react/              # React 适配
-│   ├── vue/                # Vue 适配
-│   ├── wx-miniprogram/     # 微信小程序适配
-│   ├── web-performance/    # 性能监控
-│   └── web/                # Web 集成包
-├── docs/                   # 文档
-├── examples/               # 示例
-└── package.json
+// React
+<ErrorBoundary fallback={<div>出错了</div>}>
+  <App />
+</ErrorBoundary>
 ```
 
-### 开发命令
+## 采集的能力
 
-```bash
-# 安装依赖
-pnpm install
+### 错误追踪（自动）
 
-# 构建所有包
-pnpm build
+| 类型 | 触发 | 上报 |
+|---|---|---|
+| JS 异常 | `window.onerror` | `JAVASCRIPT_ERROR` |
+| Promise | `unhandledrejection` | `PROMISE_ERROR` |
+| HTTP | xhr / fetch 包装 | `FETCH_ERROR`（5xx / status 0；2xx 只进面包屑） |
+| 资源 | img/script/link `error` | `RESOURCE_ERROR` |
 
-# 开发模式
-pnpm dev
+同错误自动去重（`maxDuplicateCount`，默认 2 次）。SDK 自身上报地址被拦截，不自循环。
 
-# 类型检查
-pnpm typecheck
+### 性能监控（默认开）
 
-# 代码检查
-pnpm lint
+| 指标 | 说明 |
+|---|---|
+| FP / FCP | 首次绘制 / 首次内容绘制 |
+| LCP | 最大内容绘制 |
+| CLS | 累积布局偏移（session-window 算法，对齐 2021 官方） |
+| INP | 交互到下一帧（取代已废弃的 FID） |
+| FPS | 帧率 |
+| CCP | 自定义首屏（业务可用时刻：关键 API + 图片完成） |
+| RT | **慢资源定位**（duration ≥ 阈值 + 阶段拆解 + 跨域处理） |
+| NavigationTiming | 加载瀑布（DNS / TCP / SSL / TTFB / DOM） |
 
-# 格式化
-pnpm format
+性能数据走统一 core transport（`eventType:performance`），卸载靠 sendBeacon。
 
-# 清理
-pnpm clean
-```
+### 用户行为（面包屑，自动）
 
-### 构建
-
-```bash
-# 构建所有包
-pnpm build
-
-# 构建指定包
-pnpm build:types
-pnpm build:utils
-pnpm build:shared
-pnpm build:core
-pnpm build:platforms
-```
-
-## 核心功能
-
-### 错误追踪
-
-自动捕获并上报以下错误：
-
-- JavaScript 运行时错误
-- Promise 未捕获拒绝
-- HTTP 请求错误（XHR、Fetch）
-- 资源加载错误（脚本、样式、图片）
-
-```typescript
-init({
-  dsn: 'your-dsn',
-  enableErrorTracking: true,
-});
-```
-
-### 性能监控
-
-采集核心 Web 性能指标：
-
-- **LCP** - 最大内容绘制
-- **FID** - 首次输入延迟
-- **CLS** - 累积布局偏移
-- **FCP** - 首次内容绘制
-- **TTFB** - 首字节时间
-
-```typescript
-init({
-  dsn: 'your-dsn',
-  enablePerformanceTracking: true,
-});
-```
-
-### 用户行为
-
-自动记录用户操作轨迹：
-
-- HTTP 请求记录
-- 路由切换记录
-- 用户点击记录
-- Console 日志（可选）
-
-```typescript
-init({
-  dsn: 'your-dsn',
-  maxBreadcrumbs: 10,
-});
-```
+HTTP / 点击 / 路由 / console 自动入栈，随错误一起上报，便于还原出错现场。
 
 ## 配置选项
 
-| 选项 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `dsn` | `string` | *必需* | 上报地址 |
-| `trackerId` | `string \| number` | *自动生成* | 用户 ID |
-| `enableErrorTracking` | `boolean` | `true` | 启用错误追踪 |
-| `enablePerformanceTracking` | `boolean` | `true` | 启用性能监控 |
-| `enableHttpTracking` | `boolean` | `true` | 启用 HTTP 监控 |
-| `maxBreadcrumbs` | `number` | `10` | 面包屑最大数量 |
-| `silent` | `boolean` | `true` | 关闭控制台日志 |
+| 选项 | 类型 | 默认 | 说明 |
+|---|---|---|---|
+| `dsn` | `string` | *必需* | 错误上报地址 |
+| `apikey` | `string` | — | 错误上报鉴权 key |
+| `trackDsn` | `string` | — | 埋点/性能上报地址（性能走此） |
+| `performance` | `boolean` | `true` | 性能采集开关 |
+| `resourceThreshold` | `number` | `300` | 慢资源判定阈值（ms） |
+| `resourceTopN` | `number` | `10` | 慢资源 Top-N |
+| `maxBreadcrumbs` | `number` | — | 面包屑最大条数 |
+| `maxDuplicateCount` | `number` | `2` | 同错误去重阈值 |
+| `silentXxx` | `boolean` | — | 静默各类采集（`silentError`/`silentXhr`/`silentFetch`/`silentConsole`/`silentDom`/`silentHistory`/`silentUnhandledrejection`/`silentHashchange`/`silentVue`） |
+| `disabled` | `boolean` | `false` | 完全关闭上报（采集器仍装载） |
+
+完整类型见 `@simple-monitor/types` 的 `InitOptions`。高级 hook（`beforeDataReport`/`configReportXhr`/`backTrackerId` 等）见各子包 README。
+
+## 包结构（分层架构）
+
+```
+基础层   types / utils / shared          类型 / 工具 / 共享常量
+核心层   core                             transport / breadcrumb / errorId / 事件总线（框架无关）
+端侧采集 browser / web-performance       浏览器采集 / 性能采集
+         vue / react                     框架错误捕获
+门面层   web                              聚合 init（业务入口）
+```
+
+各子包说明见 `packages/*/README.md`：
+
+- [`@simple-monitor/web`](./packages/web) — 门面，业务入口
+- [`@simple-monitor/browser`](./packages/browser) — 浏览器采集
+- [`@simple-monitor/web-performance`](./packages/web-performance) — 性能采集（[架构文档](./packages/web-performance/ARCHITECTURE.md)）
+- [`@simple-monitor/vue`](./packages/vue) / [`@simple-monitor/react`](./packages/react) — 框架适配
+- [`@simple-monitor/core`](./packages/core) — 核心引擎
+
+## 开发
+
+```bash
+pnpm install       # 安装（Node >= 16, pnpm >= 8）
+pnpm build         # 构建所有包（ESM + CJS）
+pnpm test          # 单元测试（vitest）
+pnpm typecheck     # 类型检查
+```
 
 ## License
 
-[MIT](LICENSE)
+[MIT](./LICENSE)

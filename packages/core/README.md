@@ -1,232 +1,116 @@
 # @simple-monitor/core
 
-> Simple Monitor SDK 核心业务逻辑包
+Simple Monitor SDK 的核心引擎，框架无关。负责配置绑定、用户行为栈、错误去重（errorId）、数据转换、事件总线与上报通道（XHR / Image / sendBeacon / wx.request）。被 `browser` / `vue` / `react` / `web` 等平台包依赖，业务方通常不直接使用本包。
 
-## 简介
+## 安装
 
-本包实现监控系统的核心能力，包含所有平台共享的业务逻辑。它是 SDK 的核心层，被所有平台适配层包依赖。
-
-## 包内容
-
-### 用户行为栈 (`breadcrumb.ts`)
-
-记录用户操作路径，为错误排查提供上下文。
-
-```typescript
-class Breadcrumb {
-  stack: BreadcrumbPushData[]     // 行为栈数据
-  maxBreadcrumbs: number          // 最大记录数
-  beforePushBreadcrumb: unknown   // 前置钩子
-
-  push(data: BreadcrumbPushData): void    // 添加行为记录
-  getStack(): BreadcrumbPushData[]        // 获取行为栈
-  getCategory(type: BreadCrumbTypes): string  // 获取分类
-  bindOptions(options: InitOptions): void // 绑定配置
-}
+```bash
+npm i @simple-monitor/core
 ```
 
-### 错误 ID 生成 (`errorId.ts`)
+> 该包通常作为平台包（`@simple-monitor/web` 等）的依赖被间接引入。仅在需要绕过平台适配、自行编排采集时才直接使用。
 
-为每个错误生成唯一标识符，用于去重和统计。
+## 用法
 
-```typescript
-function createErrorId(data: ReportDataType, apikey: string): number | null
-function getRealPath(url: string): string                      // 规范化 URL
-function hashCode(str: string): number                        // 字符串哈希
-```
-
-### 配置管理 (`options.ts`)
-
-管理 SDK 的配置选项。
-
-```typescript
-class Options {
-  // 钩子函数
-  beforeAppAjaxSend: Function
-  enableTraceId: boolean
-  filterXhrUrlRegExp: RegExp
-  traceIdFieldName: string
-  throttleDelayTime: number
-  maxDuplicateCount: number
-
-  // 微信小程序钩子
-  appOnLaunch: Function
-  appOnShow: Function
-  pageOnShow: Function
-  // ...
-
-  bindOptions(options: InitOptions): void
-}
-
-function setTraceId(httpUrl: string, callback: Function): void
-```
-
-### 事件订阅系统 (`subscribe.ts`)
-
-发布-订阅模式的事件处理系统。
-
-```typescript
-interface ReplaceHandler {
-  type: EventTypes | WxEvents
-  callback: ReplaceCallback
-}
-
-function subscribeEvent(handler: ReplaceHandler): boolean  // 订阅事件
-function triggerHandlers(type: EventTypes | WxEvents, data: any): void  // 触发事件
-```
-
-### 数据转换 (`transformData.ts`)
-
-将原始监控数据转换为统一的上报格式。
-
-```typescript
-// HTTP 错误转换
-function httpTransform(data: MonitorHttp): ReportDataType
-
-// 资源错误转换
-function resourceTransform(target: ResourceErrorTarget): ReportDataType
-
-// Console 调用处理
-function handleConsole(data: Replace.TriggerConsole): void
-```
-
-### 数据上报 (`transportData.ts`)
-
-组装完整 payload 并通过多种方式发送到服务端。
-
-```typescript
-class TransportData {
-  queue: Queue                    // 请求队列
-  errorDsn: string                // 错误上报地址
-  trackDsn: string                // 埋点上报地址
-
-  // 上报方式
-  xhrPost(data: TransportDataType, url: string): void    // XHR 上报
-  imgRequest(data: TransportDataType, url: string): void // Image 上报
-  wxPost(data: TransportDataType, url: string): void     // 微信小程序上报
-
-  // 核心方法
-  send(data: FinalReportType): Promise<void>             // 发送数据
-  beforePost(data: FinalReportType): Promise<...>        // 上报前处理
-  getTransportData(data: FinalReportType): TransportDataType  // 组装数据
-  getAuthInfo(): AuthInfo                                 // 获取认证信息
-  isSdkTransportUrl(targetUrl: string): boolean           // 判断 SDK 上报地址
-
-  bindOptions(options: InitOptions): void                 // 绑定配置
-}
-```
-
-### 手动上报 API (`external.ts`)
-
-提供给业务方的主动监控接口。
-
-```typescript
-function log(options: LogTypes): void
-```
-
-使用示例：
-
-```typescript
-import { log } from 'simple-monitor'
+```ts
+import { initCore, log, transportData, breadcrumb } from '@simple-monitor/core'
 import { Severity } from '@simple-monitor/types'
 
-// 捕获业务异常并上报
+// 1. 初始化核心运行时（校验 dsn / apikey 必填，绑定全部运行时配置）
+initCore({
+  dsn: 'https://up.example.com/report',
+  apikey: 'your-apikey',
+  maxBreadcrumbs: 20,
+})
+
+// 2. 手动上报一条业务日志
 try {
-  processPayment()
+  doSomething()
 } catch (err) {
-  log({
-    message: '支付处理失败',
-    tag: 'payment',
-    level: Severity.Critical,
-    ex: err,
-  })
+  log({ message: '处理失败', tag: 'biz', level: Severity.Error, ex: err })
 }
 ```
 
-### 全局支持 (`global.ts`)
+## API
 
-全局状态管理和工具函数。
+### `initCore(options: InitOptions = {}): void`
 
-```typescript
-interface MonitorSupport {
-  logger: Logger
-  breadcrumb: IBreadcrumb
-  transportData: ITransportData
-  replaceFlag: { [key: string]: boolean }
-  record?: any[]
-  deviceInfo?: TrackDeviceInfo
-  options?: any
-  track?: any
-}
+初始化核心运行时。校验 `dsn` / `apikey` 必填后，依次：设静默标志 → 绑定面包屑 → 绑定 logger → 绑定 transportData → 绑定 options。平台包的 `init()` 应调用本函数，避免直接触碰 core 内部。
 
-export const _support: MonitorSupport  // 全局支持对象
-function silentConsoleScope<T>(callback: () => T): T  // 静默控制台作用域
-function setSilentFlag(paramOptions: InitOptions): void  // 设置静默标志
-```
+### 数据上报（`transportData`）
 
-### 日志系统 (`logger.ts`)
+- `transportData` — `TransportData` 单例，对外暴露：
+  - `send(data)` — 核心上报入口。组装信封（authInfo + breadcrumb + deviceInfo）→ `beforePost` 生成 errorId / 去重 → 选通道发送；页面卸载时自动切 `sendBeacon`（紧急同步，防丢）。
+  - `bindOptions(options)` — 绑定 dsn / apikey / trackDsn / trackKey / useImgUpload 及各 hook。
+  - `isSdkTransportUrl(targetUrl)` — 判断某 URL 是否为 SDK 自身上报地址（避免监听到自己的请求）。
+  - `getAuthInfo()` / `getApikey()` / `getTrackKey()` / `getTrackerId()` — 读取认证信息。
+  - `getTransportData(data)` — 组装完整的 `TransportDataType` 信封。
+  - `getRecord()` / `getDeviceInfo()` — 录屏片段与设备信息。
+  - 字段：`queue` / `errorDsn` / `trackDsn` / `apikey` / `trackKey` / `useImgUpload` 及各 hook（`beforeDataReport` / `configReportXhr` / `configReportUrl` / `configReportWxRequest` / `backTrackerId`）。
+- `TransportData` — 类本身（一般用 `transportData` 单例即可）。
 
-分级日志输出功能。
+### 用户行为栈（`breadcrumb`）
 
-```typescript
-class Logger {
-  disable(): void
-  enable(): void
-  bindOptions(debug: boolean): void
-  log/warn/error/info/debug(...args: any[]): void
-}
+- `breadcrumb` — `Breadcrumb` 单例：
+  - `push(data)` / `immediatePush(data)` — 入栈一条行为。
+  - `getStack()` — 获取当前行为栈。
+  - `clear()` — 清空。
+  - `shift()` — 移除最早一条。
+  - `getCategory(type)` — 由 `BreadCrumbTypes` 取分类。
+  - `bindOptions(options)` — 绑定 `maxBreadcrumbs` / `beforePushBreadcrumb`。
+- `Breadcrumb` — 类本身。
 
-export const logger: Logger  // 全局日志实例
-```
+### 错误去重（`errorId`）
+
+- `createErrorId(data, apikey)` — 基于错误指纹生成 errorId（用于去重，受 `maxDuplicateCount` 控制）。
+- `getRealPath(url)` — 规范化 URL（去 hash / 去查询），用于指纹稳定。
+- `hashCode(str)` — 字符串哈希。
+- `getFlutterRealOrigin(url)` / `getFlutterRealPath(url)` / `getRealPageOrigin(url)` / `removeHashPath(url)` — Flutter / 页面路径相关规范化辅助。
+
+### 数据转换（`transformData`）
+
+- `httpTransform(data)` — 把 `MonitorHttp` 转成统一的 `ReportDataType`。
+- `resourceTransform(target)` — 资源加载失败目标转 `ReportDataType`。
+- `handleConsole(data)` — 处理拦截到的 console 调用。
+
+### 配置管理（`options`）
+
+- `options` — `Options` 单例，持有 traceId / 过滤正则 / 节流 / 各 hook / 微信小程序钩子等运行时配置。
+- `Options` — 类本身，`bindOptions(options)` 逐项校验并绑定。
+- `setTraceId(httpUrl, callback)` — 满足条件时生成 traceId 并经回调注入请求头。
+- `initOptions(paramOptions?)` — 初始化入口（设静默标志 → 面包屑 → logger → transportData → options）。
+
+### 事件总线（`subscribe`）
+
+- `subscribeEvent(handler)` — 订阅一个事件处理器（返回是否订阅成功，受静默开关控制）。
+- `triggerHandlers(type, data)` — 触发某类事件的所有处理器。
+- `ReplaceHandler` / `ReplaceCallback` — 处理器结构与回调类型。
+
+### 全局支持（`global`）
+
+- `_support` — 全局 `MonitorSupport` 对象（logger / breadcrumb / transportData / replaceFlag / deviceInfo / options）。
+- `getGlobalMonitorSupport()` — 获取 / 创建全局支持对象。
+- `getGlobal` — 透传 `@simple-monitor/utils` 的同名函数。
+- `silentConsoleScope(callback)` — 在静默 console 作用域内执行回调。
+- `setSilentFlag(paramOptions)` — 根据 `silentXxx` 配置写入各采集器标志位。
+
+### 手动上报（`external`）
+
+- `log({ message, tag?, level?, ex?, type? })` — 手动上报日志。Error 对象会自动提取堆栈；同时写入用户行为栈。
+
+### 日志（`logger`）
+
+- `Logger` — 日志接口类型（`@simple-monitor/utils` 提供实现）。
 
 ## 数据流
 
 ```
-原始错误发生
-    ↓
-transformData (数据转换)
-    ↓
-transportData.beforePost (生成 errorId)
-    ↓
-transportData.send (选择上报方式)
-    ↓
-Queue (队列)
-    ↓
-服务端
-```
-
-## 使用示例
-
-```typescript
-import { initOptions, transportData, breadcrumb } from '@simple-monitor/core'
-
-// 初始化配置
-initOptions({
-  dsn: 'https://monitor.example.com/error',
-  apikey: 'your-api-key',
-  maxBreadcrumbs: 20,
-})
-
-// 手动添加行为记录
-breadcrumb.push({
-  type: BreadCrumbTypes.CLICK,
-  category: 'user',
-  data: { element: 'submit-button' },
-  level: Severity.Info,
-})
-
-// 发送数据
-transportData.send({
-  type: ErrorTypes.JAVASCRIPT_ERROR,
-  message: 'Something went wrong',
-  level: Severity.Error,
-  url: window.location.href,
-  time: Date.now(),
-})
+原始事件 → transformData 转换 → transportData.send
+  → beforePost（生成 errorId / 去重 / 钩子）
+  → 通道选择（XHR / Image / 卸载时 sendBeacon）
+  → Queue → 服务端
 ```
 
 ## 依赖
 
-- `@simple-monitor/types` - 类型定义
-- `@simple-monitor/utils` - 工具函数
-- `@simple-monitor/shared` - 共享常量
+- `@simple-monitor/types` · `@simple-monitor/shared` · `@simple-monitor/utils`
