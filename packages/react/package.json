@@ -4,10 +4,10 @@
   "description": "React platform adapter for Simple Monitor SDK",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/index.d.mts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
+      "types": "./dist/index.d.mts",
       "import": "./dist/index.js"
     }
   },
@@ -22,7 +22,8 @@
   },
   "dependencies": {
     "@simple-monitor/core": "workspace:*",
-    "@simple-monitor/types": "workspace:*"
+    "@simple-monitor/types": "workspace:*",
+    "@simple-monitor/utils": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=16.8.0"
