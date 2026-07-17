@@ -1,14 +1,23 @@
 /**
  * INP（Interaction to Next Paint）—— 2024-03-12 取代 FID 成为 Core Web Vital。
  *
- * 测量整个页面生命周期内，用户交互（点击/按键/触摸）的「输入到下一帧绘制」全链路延迟，
- * 取最差交互的 duration。FID 只测首次输入延迟，INP 覆盖所有交互，更准确。
+ * 测量整个页面生命周期内，用户交互（点击/按键/触摸）的「输入到下一帧绘制」全链路延迟。
+ * FID 只测首次输入延迟，INP 覆盖所有交互，更准确。
  *
+ * 【算法】对齐 Google web-vitals 官方定义：
+ *  - 按 interactionId 聚合：一次交互产生多条 event entry（pointerdown/click 等），
+ *    该交互的延迟 = 组内所有 entry 中最大的 duration。
+ *  - 页面隐藏时计算最终值：
+ *    · 交互数 ≤ 50：取所有交互里的最大延迟（worst-case）；
+ *    · 交互数 > 50：取所有交互延迟的 P98（忽略 top 2%，过滤 GC/IO 等系统抖动噪声）。
+ *  旧实现直接对所有 entry 取单个最大，长会话会被尾部噪声带偏、报值偏高。
  */
 import { isPerformanceObserverSupported } from '../utils/isSupported'
 import observe from '../lib/observe'
 import getFirstHiddenTime from '../lib/getFirstHiddenTime'
 import { onHidden } from '../lib/onHidden'
+import { computeINPFromInteractions } from '../lib/computeINP'
+import type { InteractionRecord } from '../lib/computeINP'
 import type MetricsStore from '../lib/store'
 import type { IReportHandler, IScoreConfig, IMetrics, PerformanceEventTiming } from '../types'
 import { metricsName } from '../constants'
@@ -27,18 +36,20 @@ export const initINP = (
   }
 
   const firstHiddenTime = getFirstHiddenTime()
-  let worst = 0
-  let eventName = ''
-  let target: Element | undefined
+  // 按 interactionId 聚合：一次交互的多条 entry 合并为一个 record（取组内最大 duration）
+  const interactions = new Map<number, InteractionRecord>()
 
   const entryHandler = (entry: PerformanceEntry): void => {
     const e = entry as PerformanceEventTiming
-    if (e.interactionId && e.startTime < firstHiddenTime.timeStamp) {
-      if (e.duration > worst) {
-        worst = e.duration
-        eventName = e.name
-        target = e.target
-      }
+    if (!e.interactionId || e.startTime >= firstHiddenTime.timeStamp) return
+
+    const existing = interactions.get(e.interactionId)
+    if (!existing || e.duration > existing.duration) {
+      interactions.set(e.interactionId, {
+        duration: e.duration,
+        name: e.name,
+        target: e.target,
+      })
     }
   }
 
@@ -50,14 +61,14 @@ export const initINP = (
     }
     po?.disconnect()
 
-    if (worst > 0 && !store.has(metricsName.INP)) {
-      const value = roundByFour(worst, 2)
+    if (!store.has(metricsName.INP) && interactions.size > 0) {
+      const { value, record } = computeINPFromInteractions([...interactions.values()])
       const metrics = {
         name: metricsName.INP,
         value: {
-          eventName,
-          targetCls: (target as HTMLElement)?.className,
-          duration: value,
+          eventName: record?.name,
+          targetCls: (record?.target as HTMLElement)?.className,
+          duration: roundByFour(value, 2),
         },
         score: calcScore(metricsName.INP, value, scoreConfig),
       } as IMetrics
