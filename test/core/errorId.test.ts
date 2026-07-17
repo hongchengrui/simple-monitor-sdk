@@ -1,13 +1,32 @@
-import { describe, it, expect } from 'vitest'
-import { createErrorId } from '@simple-monitor/core'
+// node 环境没有 sessionStorage；errorId.ts 走 feature-detect，没有时降级纯内存。
+// 这里手挂一个内存版 sessionStorage，让持久化路径可被测试观测（等价于浏览器的存储行为）。
+const memStore: Record<string, string> = {}
+;(globalThis as any).sessionStorage = {
+  getItem: (k: string) => (k in memStore ? memStore[k] : null),
+  setItem: (k: string, v: string) => {
+    memStore[k] = v
+  },
+  removeItem: (k: string) => {
+    delete memStore[k]
+  },
+  clear: () => {
+    for (const k of Object.keys(memStore)) delete memStore[k]
+  },
+  key: (i: number) => Object.keys(memStore)[i] ?? null,
+  get length() {
+    return Object.keys(memStore).length
+  },
+}
+import { describe, it, expect, beforeEach } from 'vitest'
+import { createErrorId, clearDedup } from '@simple-monitor/core'
 import { ErrorTypes, EventTypes } from '@simple-monitor/types'
 import type { ReportDataType } from '@simple-monitor/types'
 
 /**
  * createErrorId 错误指纹去重单测
  *
- * errorId.ts 内部用模块级 allErrorNumber 单例累积计数（跨 test 不重置）。
- * 因此每个 test 使用独立的 message + apikey 组合，确保 errorId 指纹互不干扰。
+ * errorId.ts 用内存 cache + sessionStorage 双层累积计数。
+ * 每个测试用独立 message + apikey 组合避免指纹互扰。
  */
 describe('createErrorId 错误指纹去重', () => {
   it('JAVASCRIPT_ERROR：同错误达到 maxDuplicateCount(默认2) 后返回 null', () => {
@@ -18,10 +37,8 @@ describe('createErrorId 错误指纹去重', () => {
       url: 'http://localhost/',
       level: 'normal',
     }
-    // 第 1、2 次正常返回 errorId
     expect(createErrorId({ ...data }, 'k')).not.toBeNull()
     expect(createErrorId({ ...data }, 'k')).not.toBeNull()
-    // 第 3 次被去重丢弃
     expect(createErrorId({ ...data }, 'k')).toBeNull()
   })
 
@@ -39,7 +56,6 @@ describe('createErrorId 错误指纹去重', () => {
   })
 
   it('PROMISE_ERROR（reason 为 Error，name=Error）：同原因第 3 次返回 null', () => {
-    // 对应 handleUnhandledRejection 中 reason instanceof Error 的路径
     const data: ReportDataType = {
       type: ErrorTypes.PROMISE_ERROR,
       name: 'Error',
@@ -62,10 +78,10 @@ describe('createErrorId 错误指纹去重', () => {
     const a = { ...base, message: 'unit-distinct-a' }
     const b = { ...base, message: 'unit-distinct-b' }
     expect(createErrorId({ ...a }, 'k')).not.toBeNull()
-    expect(createErrorId({ ...b }, 'k')).not.toBeNull() // b 第 1 次，独立
-    expect(createErrorId({ ...a }, 'k')).not.toBeNull() // a 第 2 次
-    expect(createErrorId({ ...a }, 'k')).toBeNull() // a 第 3 次 -> 去重
-    expect(createErrorId({ ...b }, 'k')).not.toBeNull() // b 第 2 次，不受 a 影响
+    expect(createErrorId({ ...b }, 'k')).not.toBeNull()
+    expect(createErrorId({ ...a }, 'k')).not.toBeNull()
+    expect(createErrorId({ ...a }, 'k')).toBeNull()
+    expect(createErrorId({ ...b }, 'k')).not.toBeNull()
   })
 
   it('apikey 参与指纹：同错误不同 apikey 视为不同来源', () => {
@@ -77,8 +93,43 @@ describe('createErrorId 错误指纹去重', () => {
       level: 'normal',
     }
     expect(createErrorId({ ...data }, 'key-A')).not.toBeNull()
-    expect(createErrorId({ ...data }, 'key-B')).not.toBeNull() // 不同 apikey，新指纹
-    expect(createErrorId({ ...data }, 'key-A')).not.toBeNull() // key-A 第 2 次
-    expect(createErrorId({ ...data }, 'key-A')).toBeNull() // key-A 第 3 次 -> 去重
+    expect(createErrorId({ ...data }, 'key-B')).not.toBeNull()
+    expect(createErrorId({ ...data }, 'key-A')).not.toBeNull()
+    expect(createErrorId({ ...data }, 'key-A')).toBeNull()
+  })
+})
+
+describe('createErrorId 会话级持久化（sessionStorage）', () => {
+  beforeEach(() => clearDedup())
+
+  const base: ReportDataType = {
+    type: ErrorTypes.JAVASCRIPT_ERROR,
+    name: 'Error',
+    url: 'http://localhost/',
+    level: 'normal',
+  }
+
+  it('clearDedup 清空后，之前已达上限的错误可重新上报', () => {
+    const data = { ...base, message: 'unit-persist-reset' }
+    expect(createErrorId({ ...data }, 'k')).not.toBeNull()
+    expect(createErrorId({ ...data }, 'k')).not.toBeNull()
+    expect(createErrorId({ ...data }, 'k')).toBeNull()
+
+    clearDedup()
+
+    expect(createErrorId({ ...data }, 'k')).not.toBeNull()
+    expect(createErrorId({ ...data }, 'k')).not.toBeNull()
+    expect(createErrorId({ ...data }, 'k')).toBeNull()
+  })
+
+  it('计数写入 sessionStorage，值为 2', () => {
+    const data = { ...base, message: 'unit-persist-survive' }
+
+    expect(createErrorId({ ...data }, 'k')).not.toBeNull()
+    expect(createErrorId({ ...data }, 'k')).not.toBeNull()
+
+    const dedupKeys = Object.keys(memStore).filter((k) => k.startsWith('monitor:dedup:'))
+    expect(dedupKeys.length).toBe(1)
+    expect(memStore[dedupKeys[0]]).toBe('2')
   })
 })
